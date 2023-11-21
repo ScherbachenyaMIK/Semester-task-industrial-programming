@@ -13,6 +13,11 @@ public class JsonWriter {
         objectMapper = new ObjectMapper();
         File_ = new File(filename);
     }
+    JsonWriter(File EnterFile)
+    {
+        objectMapper = new ObjectMapper();
+        File_ = EnterFile;
+    }
     public void WriteString(String str) throws IOException {
         objectMapper.writeValue(File_, str);
     }

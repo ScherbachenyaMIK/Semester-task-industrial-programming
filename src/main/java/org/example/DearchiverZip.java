@@ -2,15 +2,15 @@ package org.example;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class DearchiverZip {
     private FileInputStream File_;
-    static ZipArchiveInputStream ZipStream;
+    private ZipArchiveInputStream ZipStream;
     DearchiverZip(String filename) throws IOException {
         File_ = new FileInputStream(filename);
         ZipStream = new ZipArchiveInputStream(File_);
@@ -20,11 +20,20 @@ public class DearchiverZip {
         ZipStream.close();
     }
 
-    public static HashMap<String, String> Dearchive() throws IOException {
-        HashMap<String, String> files;
+    public ArrayList<String> Dearchive() throws IOException {
+        ArrayList<String> files = new ArrayList<String>();
         ArchiveEntry entry;
+        entry = ZipStream.getNextEntry();
+        _BufferedFileReader fr = new _BufferedFileReader(ZipStream, "UTF8");
         while ((entry = ZipStream.getNextEntry()) != null) {
-            files.put(entry.getName(), ReadContent(CheckFormat(ZipStream));
+            files.add(entry.getName());
+            _FileWriter fw = new _FileWriter(files.get(files.size() - 1));
+            String str;
+            while ((str = fr.ReadString()) != null) {
+                fw.WriteString(str);
+            }
+            fw.CloseFile();
         }
+        return files;
     }
 }

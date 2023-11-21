@@ -1,12 +1,14 @@
 package org.example;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class _FileWriter {
     private FileWriter File_;
     _FileWriter(String filename) throws IOException {
         File_ = new FileWriter(filename);
+    }
+    _FileWriter(File EnterFile) throws IOException {
+        File_ = new FileWriter(EnterFile);
     }
     public void CloseFile() throws IOException {
         File_.close();

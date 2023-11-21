@@ -1,13 +1,14 @@
 package org.example;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class _FileReader {
     private FileReader File_;
     _FileReader(String filename) throws FileNotFoundException {
         File_ = new FileReader(filename);
+    }
+    _FileReader(File EnterFile) throws FileNotFoundException {
+        File_ = new FileReader(EnterFile);
     }
     public void CloseFile() throws IOException{
         File_.close();
@@ -33,4 +34,9 @@ public class _FileReader {
         }
         return Integer.parseInt(str);
     }
+
+    public FileReader getFile_() {
+        return File_;
+    }
 }
+

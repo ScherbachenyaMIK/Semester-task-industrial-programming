@@ -13,6 +13,11 @@ public class JsonReader {
         objectMapper = new ObjectMapper();
         File_ = new File(filename);
     }
+    JsonReader(File EnterFile)
+    {
+        objectMapper = new ObjectMapper();
+        File_ = EnterFile;
+    }
     public String ReadString() throws IOException {
         String str = new String();
         return objectMapper.readValue(File_, str.getClass());
