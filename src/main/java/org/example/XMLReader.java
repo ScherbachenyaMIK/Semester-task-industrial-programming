@@ -1,44 +1,39 @@
 package org.example;
-import java.io.IOException;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-class SAXExample {
-    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        SAXParser parser = factory.newSAXParser();
-    }
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-    private static class XMLHandler extends DefaultHandler {
-        @Override
-        public void startDocument() throws SAXException {
-        }
-
-        @Override
-        public void endDocument() throws SAXException {
-        }
-
-        @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        }
-
-        @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-        }
-
-        @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
-        }
-
-        @Override
-        public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-        }
-    }
-}
+import java.io.File;
+import java.io.IOException;
 
 public class XMLReader {
+    private File file;
+
+    public XMLReader(String filename) {
+        this.file = new File(filename);
+    }
+
+    public String ReadString() throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(file);
+
+        NodeList nodeList = document.getElementsByTagName("Data");
+        if (nodeList.getLength() > 0) {
+            return nodeList.item(0).getTextContent();
+        }
+        return null;
+    }
+
+    public int ReadInteger() throws ParserConfigurationException, IOException, SAXException {
+        String data = ReadString();
+        if (data != null) {
+            return Integer.parseInt(data);
+        }
+        return 0;
+    }
 }
