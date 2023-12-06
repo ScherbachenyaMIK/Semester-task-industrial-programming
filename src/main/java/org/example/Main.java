@@ -27,5 +27,15 @@ public class Main {
         wXML.WriteInteger(15);
         int i = rXML.ReadInteger();
         System.out.println(i);
+        ArrayList<String> al = new ArrayList<>();
+        al.add("x = 0");
+        al.add("y = 1");
+        al.add("t = 1.0");
+        al.add("p = .057");
+        al.add("r = -.058");
+        MathExpression me = new MathExpression("x + y + t + p / r = -1", al, 5);
+        System.out.println(me.getExpession());
+        me.replaceVariablesWithNumbers();
+        System.out.println(me.getExpession());
     }
 }

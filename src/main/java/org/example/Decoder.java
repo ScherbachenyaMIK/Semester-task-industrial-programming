@@ -31,7 +31,7 @@ public class Decoder {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
         byte[] iv = new byte[16];
         if (inputStream.read(iv) != iv.length) {
-            throw new IllegalStateException("Некорректный формат файла: отсутствует IV");
+            throw new IllegalStateException("Incorrect file format: отсутствует IV");
         }
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
 
