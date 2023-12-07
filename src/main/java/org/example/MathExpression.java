@@ -13,7 +13,7 @@ public class MathExpression {
     private String expession;
     private ArrayList<Character> variables = new ArrayList<>();
     private ArrayList<Character> types = new ArrayList<>();
-    private ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<ImmutablePair<Integer, Integer>>();
+    private ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
     private ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
     private int position;
     static Pattern regex_double = Pattern.compile(" -?(\\d+\\.\\d*[dD]?$|\\.\\d+[dD]?$|[1-9]e-?[1-9]\\d*[dD]?$)");
@@ -65,6 +65,7 @@ public class MathExpression {
                 expession = expession.replaceAll(String.valueOf(var), String.valueOf(value));
             }
         }
+        expession = expession.replaceAll("[dD]","");
         expession = expession.replaceAll("\\+ -", "- ");
         expession = expession.replaceAll("- -", "+ ");
         expession = expession.replaceAll("\\* (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9]e-?[1-9]\\d*[dD]?) ", "\\* \\($1\\) ");

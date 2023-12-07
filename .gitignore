@@ -43,3 +43,7 @@ build/
 *.out
 *.zip
 *.rar
+
+### Archive/Dearchive ###
+Rar.exe
+UnRAR.exe

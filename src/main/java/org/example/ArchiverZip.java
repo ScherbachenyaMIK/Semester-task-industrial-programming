@@ -13,7 +13,7 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 public class ArchiverZip
 {
     private FileOutputStream File_;
-    static ZipArchiveOutputStream ZipStream;
+    private ZipArchiveOutputStream ZipStream;
     ArchiverZip(String filename) throws IOException {
         File_ = new FileOutputStream(filename);
         ZipStream = new ZipArchiveOutputStream(File_);
