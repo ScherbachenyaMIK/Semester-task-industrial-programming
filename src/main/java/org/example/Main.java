@@ -38,7 +38,11 @@ public class Main {
         me.replaceVariablesWithNumbers();
         System.out.println(me.getExpession());
         DearchiverRar dr = new DearchiverRar("Tasks1-2.rar");
+        DearchiverZip dz = new DearchiverZip("Tasks1-2.zip");
+        dz.Dearchive();
+        dz.CloseDearchiverZip();
         dr.Dearchive();
+        dr.CloseDearchiverRar();
         ArchiverRar ar = new ArchiverRar("target/");
         ar.Archive();
     }
