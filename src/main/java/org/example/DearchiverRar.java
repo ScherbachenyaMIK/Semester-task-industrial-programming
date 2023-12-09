@@ -3,8 +3,6 @@ package org.example;
 import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DearchiverRar {
     private String filename;

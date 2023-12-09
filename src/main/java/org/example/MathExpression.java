@@ -6,25 +6,34 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class MathExpression {
+    @Setter
     @Getter
-    private String expession;
+    private String expression;
+    @Setter
     @Getter
     private ArrayList<Character> variables = new ArrayList<>();
+    @Setter
     @Getter
     private ArrayList<Character> types = new ArrayList<>();
+    @Setter
     @Getter
     private ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
+    @Setter
     @Getter
     private ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
     private int position;
     static Pattern regex_double = Pattern.compile(" -?(\\d+\\.\\d*[dD]?$|\\.\\d+[dD]?$|[1-9]e-?[1-9]\\d*[dD]?$)");
     static Pattern regex_int = Pattern.compile(" -?\\d+$");
+    MathExpression() {
+        expression = "";
+    }
     MathExpression(String expession_, ArrayList<String> variables_, int position_) throws IOException {
         position = position_;
-        expession = expession_;
+        expression = expession_;
         for(String i : variables_)
         {
             variables.add(i.charAt(0));
@@ -59,20 +68,20 @@ public class MathExpression {
                 int j;
                 for(j = 0; integers.get(j).getRight() != i; ++j);
                 int value = integers.get(j).getLeft();
-                expession = expession.replaceAll(String.valueOf(var), String.valueOf(value));
+                expression = expression.replaceAll(String.valueOf(var), String.valueOf(value));
             }
             else
             {
                 int j;
                 for(j = 0; doubles.get(j).getRight() != i; ++j);
                 double value = doubles.get(j).getLeft();
-                expession = expession.replaceAll(String.valueOf(var), String.valueOf(value));
+                expression = expression.replaceAll(String.valueOf(var), String.valueOf(value));
             }
         }
-        expession = expession.replaceAll("[dD]","");
-        expession = expession.replaceAll("\\+ -", "- ");
-        expession = expession.replaceAll("- -", "+ ");
-        expession = expession.replaceAll("\\* (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9]e-?[1-9]\\d*[dD]?) ", "\\* \\($1\\) ");
-        expession = expession.replaceAll("/ (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9]e-?[1-9]\\d*[dD]?) ", "/ \\($1\\) ");
+        expression = expression.replaceAll("[dD]","");
+        expression = expression.replaceAll("\\+ -", "- ");
+        expression = expression.replaceAll("- -", "+ ");
+        expression = expression.replaceAll("\\* (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9]e-?[1-9]\\d*[dD]?) ", "\\* \\($1\\) ");
+        expression = expression.replaceAll("/ (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9]e-?[1-9]\\d*[dD]?) ", "/ \\($1\\) ");
     }
 }

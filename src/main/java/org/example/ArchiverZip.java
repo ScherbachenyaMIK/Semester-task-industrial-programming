@@ -1,14 +1,10 @@
 package org.example;
 import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.List;
-
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 
 public class ArchiverZip
 {

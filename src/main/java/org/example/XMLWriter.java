@@ -54,7 +54,7 @@ public class XMLWriter {
         document.appendChild(root);
 
         Element expressionElement = document.createElement("expression");
-        expressionElement.appendChild(document.createTextNode(data.getExpession()));
+        expressionElement.appendChild(document.createTextNode(data.getExpression()));
         root.appendChild(expressionElement);
 
         Element variablesElement = document.createElement("variables");
