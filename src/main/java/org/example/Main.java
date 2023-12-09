@@ -37,13 +37,23 @@ public class Main {
         System.out.println(me.getExpession());
         me.replaceVariablesWithNumbers();
         System.out.println(me.getExpession());
-        DearchiverRar dr = new DearchiverRar("Tasks1-2.rar");
-        DearchiverZip dz = new DearchiverZip("Tasks1-2.zip");
-        dz.Dearchive();
+        DearchiverRar dr = new DearchiverRar("d:/Archives/Tasks1-2.rar");
+        DearchiverZip dz = new DearchiverZip("d:/Archives/Tasks1-2.zip");
+        ArrayList<String> files = dz.Dearchive();
+        System.out.println("ZipArchiver:");
+        for(String it : files)
+        {
+            System.out.println(it);
+        }
         dz.CloseDearchiverZip();
-        dr.Dearchive();
+        files = dr.Dearchive();
+        System.out.println("\nRarArchiver:");
+        for(String it : files)
+        {
+            System.out.println(it);
+        }
         dr.CloseDearchiverRar();
-        ArchiverRar ar = new ArchiverRar("target/");
-        ar.Archive();
+//        ArchiverRar ar = new ArchiverRar("target/");
+//        ar.Archive();
     }
 }
