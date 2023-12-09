@@ -25,14 +25,12 @@ public class MathExpression {
     @Setter
     @Getter
     private ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
-    private int position;
     static Pattern regex_double = Pattern.compile(" -?(\\d+\\.\\d*[dD]?$|\\.\\d+[dD]?$|[1-9]e-?[1-9]\\d*[dD]?$)");
     static Pattern regex_int = Pattern.compile(" -?\\d+$");
     MathExpression() {
         expression = "";
     }
-    MathExpression(String expession_, ArrayList<String> variables_, int position_) throws IOException {
-        position = position_;
+    MathExpression(String expession_, ArrayList<String> variables_) throws IOException {
         expression = expession_;
         for(String i : variables_)
         {

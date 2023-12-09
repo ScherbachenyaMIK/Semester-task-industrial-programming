@@ -19,29 +19,20 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidParameterSpecException, ParserConfigurationException, TransformerException, JAXBException, SAXException, InterruptedException, InvocationTargetException, IllegalAccessException {
-        XMLWriter wXML = new XMLWriter("input.xml");
-        wXML.WriteString("SADNESSSSSSSSSSaertdstyyuiiijjj");
-        wXML.WriteString("Sawerrrrrtes");
-        wXML.WriteString("Sawerrrrrtkjes");
-        XMLReader rXML = new XMLReader("input.xml");
-        String s = rXML.ReadString();
-        System.out.println(s);
-        wXML.WriteInteger(15);
-        int i = rXML.ReadInteger();
-        System.out.println(i);
         ArrayList<String> al = new ArrayList<>();
         al.add("x = 0");
         al.add("t = 1.0");
         al.add("y = 1");
         al.add("p = .057");
         al.add("r = -.058d");
-        MathExpression me = new MathExpression("x + y + t + p / r = -1", al, 5);
-        JsonWriter jw = new JsonWriter("input.json");
-        jw.WriteMathExpression(me);
-        JsonReader jr = new JsonReader("input.json");
+        MathExpression me = new MathExpression("x + y + t + p / r = -1", al);
+        _FileWriter fw = new _FileWriter("input.txt");
+        fw.MathExpression(me);
+        fw.CloseFile();
         MathExpression ReadedME;
-        ReadedME = jr.ReadMathExpression();
-        System.out.println("\nFrom JSON:");
+        _FileReader fr = new _FileReader("input.txt");
+        ReadedME = fr.ReadMathExpression();
+        System.out.println("\nFrom without buffer txt:");
         System.out.println(ReadedME.getExpression());
         ArrayList<Character> variables = ReadedME.getVariables();
         ArrayList<Character> types = ReadedME.getTypes();
@@ -66,12 +57,11 @@ public class Main {
         {
             System.out.print(p + " ");
         }
-        XMLWriter xw = new XMLWriter("input.xml");
-        xw.WriteExpression(me);
+        System.out.println();
 
-        XMLReader xr = new XMLReader("input.xml");
-        ReadedME = xr.ReadMathExpression();
-        System.out.println("\nFrom XML:");
+        _BufferedFileReader bfr = new _BufferedFileReader(new _FileReader("input.txt"));
+        ReadedME = bfr.ReadMathExpression();
+        System.out.println("\nFrom buffered txt:");
         System.out.println(ReadedME.getExpression());
         variables = ReadedME.getVariables();
         types = ReadedME.getTypes();
@@ -96,5 +86,6 @@ public class Main {
         {
             System.out.print(p + " ");
         }
+        System.out.println();
     }
 }

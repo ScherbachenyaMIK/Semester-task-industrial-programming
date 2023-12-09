@@ -1,6 +1,9 @@
 package org.example;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import java.io.*;
+import java.util.ArrayList;
 
 public class _FileWriter {
     private FileWriter File_;
@@ -18,5 +21,30 @@ public class _FileWriter {
     }
     public void WriteInteger(int i) throws IOException {
         File_.write(Integer.valueOf(i).toString() + ' ');
+    }
+    public void MathExpression(MathExpression expression) throws IOException {
+        WriteString(expression.getExpression());
+        ArrayList<Character> variables = expression.getVariables();
+        ArrayList<Character> types = expression.getTypes();
+        ArrayList<ImmutablePair<Integer, Integer>> integers = expression.getIntegers();
+        ArrayList<ImmutablePair<Double, Integer>> doubles = expression.getDoubles();
+        for (int i = 0; i < variables.size(); ++i) {
+            StringBuilder var = new StringBuilder(variables.get(i) + " = ");
+            if (types.get(i) == 'i') {
+                for (ImmutablePair<Integer, Integer> j : integers) {
+                    if (j.getRight() == i) {
+                        var.append(j.getLeft());
+                    }
+                }
+            }
+            else {
+                for (ImmutablePair<Double, Integer> j : doubles) {
+                    if (j.getRight() == i) {
+                        var.append(j.getLeft());
+                    }
+                }
+            }
+            WriteString(var.toString());
+        }
     }
 }

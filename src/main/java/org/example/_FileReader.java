@@ -1,8 +1,12 @@
 package org.example;
 
+import lombok.Getter;
+
 import java.io.*;
+import java.util.ArrayList;
 
 public class _FileReader {
+    @Getter
     private FileReader File_;
     _FileReader(String filename) throws FileNotFoundException {
         File_ = new FileReader(filename);
@@ -20,6 +24,10 @@ public class _FileReader {
         {
             str = str + (char)ch;
         }
+        if(str.isEmpty())
+        {
+            return null;
+        }
         if(str.charAt(str.length() - 1) == '\r')
         {
             str = str.replaceFirst("\r", "");
@@ -28,15 +36,20 @@ public class _FileReader {
     }
     public int ReadInteger() throws IOException {
         String str = ReadString();
-        if(str.endsWith(" "))
-        {
+        if (str.endsWith(" ")) {
             str = str.replaceFirst("(.*) $", "$1");
         }
         return Integer.parseInt(str);
     }
-
-    public FileReader getFile_() {
-        return File_;
+    public MathExpression ReadMathExpression() throws IOException {
+        String expression = ReadString();
+        ArrayList<String> variables = new ArrayList<>();
+        String variable;
+        while((variable = ReadString()) != null)
+        {
+            variables.add(variable);
+        }
+        return new MathExpression(expression, variables);
     }
 }
 
