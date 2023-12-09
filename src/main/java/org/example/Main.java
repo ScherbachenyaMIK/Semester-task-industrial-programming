@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +17,7 @@ import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
 
 public class Main {
-    public static void main(String[] args) throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidParameterSpecException, ParserConfigurationException, TransformerException, JAXBException, SAXException, InterruptedException {
+    public static void main(String[] args) throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidParameterSpecException, ParserConfigurationException, TransformerException, JAXBException, SAXException, InterruptedException, InvocationTargetException, IllegalAccessException {
         XMLWriter wXML = new XMLWriter("input.xml");
         wXML.WriteString("SADNESSSSSSSSSSaertdstyyuiiijjj");
         wXML.WriteString("Sawerrrrrtes");
@@ -34,26 +35,9 @@ public class Main {
         al.add("p = .057");
         al.add("r = -.058d");
         MathExpression me = new MathExpression("x + y + t + p / r = -1", al, 5);
-        System.out.println(me.getExpession());
-        me.replaceVariablesWithNumbers();
-        System.out.println(me.getExpession());
-        DearchiverRar dr = new DearchiverRar("d:/Archives/Tasks1-2.rar");
-        DearchiverZip dz = new DearchiverZip("d:/Archives/Tasks1-2.zip");
-        ArrayList<String> files = dz.Dearchive();
-        System.out.println("ZipArchiver:");
-        for(String it : files)
-        {
-            System.out.println(it);
-        }
-        dz.CloseDearchiverZip();
-        files = dr.Dearchive();
-        System.out.println("\nRarArchiver:");
-        for(String it : files)
-        {
-            System.out.println(it);
-        }
-        dr.CloseDearchiverRar();
-//        ArchiverRar ar = new ArchiverRar("target/");
-//        ar.Archive();
+        JsonWriter jw = new JsonWriter("input.json");
+        jw.WriteMathExpression(me);
+        XMLWriter xw = new XMLWriter("input.xml");
+        xw.WriteExpression(me);
     }
 }

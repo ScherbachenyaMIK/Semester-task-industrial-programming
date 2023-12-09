@@ -11,9 +11,13 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 public class MathExpression {
     @Getter
     private String expession;
+    @Getter
     private ArrayList<Character> variables = new ArrayList<>();
+    @Getter
     private ArrayList<Character> types = new ArrayList<>();
+    @Getter
     private ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
+    @Getter
     private ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
     private int position;
     static Pattern regex_double = Pattern.compile(" -?(\\d+\\.\\d*[dD]?$|\\.\\d+[dD]?$|[1-9]e-?[1-9]\\d*[dD]?$)");
@@ -71,5 +75,4 @@ public class MathExpression {
         expession = expession.replaceAll("\\* (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9]e-?[1-9]\\d*[dD]?) ", "\\* \\($1\\) ");
         expession = expession.replaceAll("/ (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9]e-?[1-9]\\d*[dD]?) ", "/ \\($1\\) ");
     }
-
 }
