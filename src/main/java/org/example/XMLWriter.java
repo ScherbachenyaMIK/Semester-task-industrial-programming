@@ -14,7 +14,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public class XMLWriter {
@@ -91,5 +94,48 @@ public class XMLWriter {
         DOMSource domSource = new DOMSource(document);
         StreamResult streamResult = new StreamResult(file);
         transformer.transform(domSource, streamResult);
+    }
+}
+
+class XMLNonAPIWriter {
+    private BufferedWriter writer;
+
+    XMLNonAPIWriter(String filename) throws IOException {
+        File File_ = new File(filename);
+        writer = new BufferedWriter(new FileWriter(File_));
+    }
+    void CloseXMLNonAPIWriter() throws IOException {
+        writer.close();
+    }
+    public void WriteString(String str) throws IOException {
+        writer.write("<Data>" + str + "</Data>");
+    }
+    public void WriteInteger(int i) throws IOException {
+             writer.write("<Data>" + i + "</Data>");
+    }
+    public void WriteMathExpression(MathExpression expression) throws IOException {
+        StringBuilder content = new StringBuilder();
+        content.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n")
+                .append("<MathExpression>\n")
+                .append("  <expression>").append(expression.getExpression()).append("</expression>\n")
+                .append("  <variables>");
+        String str = String.join("\"\"", expression.getVariables().toString().split(", "));
+        str = str.replaceAll("\\[", "\"");
+        str = str.replaceAll("]", "\"");
+        content.append(str).append("</variables>\n").append("  <types>");
+        str = String.join("\"\"", expression.getTypes().toString().split(", "));
+        str = str.replaceAll("\\[", "\"");
+        str = str.replaceAll("]", "\"");
+        content.append(str).append("</types>\n").append("  <integers>");
+        str = String.join("\"\"", expression.getIntegers().toString().split(", "));
+        str = str.replaceAll("\\[", "\"");
+        str = str.replaceAll("]", "\"");
+        content.append(str).append("</integers>\n").append("  <doubles>");
+        str = String.join("\"\"", expression.getDoubles().toString().split(", "));
+        str = str.replaceAll("\\[", "\"");
+        str = str.replaceAll("]", "\"");
+        content.append(str).append("</doubles>\n")
+                .append("</MathExpression>");
+        writer.write(content.toString());
     }
 }

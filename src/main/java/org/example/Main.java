@@ -26,13 +26,14 @@ public class Main {
         al.add("p = .057");
         al.add("r = -.058d");
         MathExpression me = new MathExpression("x + y + t + p / r = -1", al);
-        _FileWriter fw = new _FileWriter("input.txt");
-        fw.MathExpression(me);
-        fw.CloseFile();
+        JsonNonAPIWriter jnaw = new JsonNonAPIWriter("inputNonAPI.json");
+        jnaw.WriteMathExpression(me);
+        jnaw.CloseJsonNonAPIWriter();
+        JsonNonAPIReader jnar = new JsonNonAPIReader("inputNonAPI.json");
         MathExpression ReadedME;
-        _FileReader fr = new _FileReader("input.txt");
-        ReadedME = fr.ReadMathExpression();
-        System.out.println("\nFrom without buffer txt:");
+        ReadedME = jnar.ReadMathExpression();
+        jnar.CloseJsonNonAPIReader();
+        System.out.println("From JSON:");
         System.out.println(ReadedME.getExpression());
         ArrayList<Character> variables = ReadedME.getVariables();
         ArrayList<Character> types = ReadedME.getTypes();
@@ -58,10 +59,14 @@ public class Main {
             System.out.print(p + " ");
         }
         System.out.println();
+        jnar.CloseJsonNonAPIReader();
 
-        _BufferedFileReader bfr = new _BufferedFileReader(new _FileReader("input.txt"));
-        ReadedME = bfr.ReadMathExpression();
-        System.out.println("\nFrom buffered txt:");
+        XMLNonAPIWriter xnaw = new XMLNonAPIWriter("inputNonAPI.xml");
+        xnaw.WriteMathExpression(me);
+        xnaw.CloseXMLNonAPIWriter();
+        XMLNonAPIReader xnar = new XMLNonAPIReader("inputNonAPI.xml");
+        ReadedME = xnar.ReadMathExpression();
+        System.out.println("From XML:");
         System.out.println(ReadedME.getExpression());
         variables = ReadedME.getVariables();
         types = ReadedME.getTypes();
@@ -87,5 +92,6 @@ public class Main {
             System.out.print(p + " ");
         }
         System.out.println();
+        xnar.CloseXMLNonAPIReader();
     }
 }
