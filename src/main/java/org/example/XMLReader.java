@@ -6,31 +6,31 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class XMLReader {
-    private File file;
-
-    public XMLReader(String filename) {
-        this.file = new File(filename);
-    }
-
-    public String ReadString() throws ParserConfigurationException, IOException, SAXException {
+    private int stringCounter = 0;
+    private int mathExpressionsCounter = 0;
+    Document document;
+    Element root;
+    public XMLReader(String filename) throws IOException, ParserConfigurationException, SAXException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(file);
+        document = documentBuilder.parse(filename);
+        root = document.getDocumentElement();
+    }
 
+    public String ReadString() {
         NodeList nodeList = document.getElementsByTagName("Data");
-        if (nodeList.getLength() > 0) {
-            return nodeList.item(0).getTextContent();
+        if (nodeList.getLength() > stringCounter) {
+            return nodeList.item(stringCounter++).getTextContent();
         }
         return null;
     }
@@ -41,29 +41,25 @@ public class XMLReader {
         }
         return 0;
     }
-    public MathExpression ReadMathExpression() throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document document = documentBuilder.parse(file);
-
-        NodeList expressionNodeList = document.getElementsByTagName("expression");
-        NodeList variablesNodeList = document.getElementsByTagName("variables");
-        NodeList typesNodeList = document.getElementsByTagName("types");
-        NodeList integersNodeList = document.getElementsByTagName("integers");
-        NodeList doublesNodeList = document.getElementsByTagName("doubles");
+    public MathExpression ReadMathExpression() throws IOException {
+        NodeList expressionNodeList = root.getElementsByTagName("expression");
+        NodeList variablesNodeList = root.getElementsByTagName("variables");
+        NodeList typesNodeList = root.getElementsByTagName("types");
+        NodeList integersNodeList = root.getElementsByTagName("integers");
+        NodeList doublesNodeList = root.getElementsByTagName("doubles");
 
         MathExpression mathExpression = new MathExpression();
-        if (expressionNodeList.getLength() > 0) {
-            mathExpression.setExpression(expressionNodeList.item(0).getTextContent());
+        if (expressionNodeList.getLength() > mathExpressionsCounter) {
+            mathExpression.setExpression(expressionNodeList.item(mathExpressionsCounter).getTextContent());
         }
         else
         {
-            throw new IOException();
+            return null;
         }
 
-        if (variablesNodeList.getLength() > 0) {
+        if (variablesNodeList.getLength() > mathExpressionsCounter) {
             ArrayList<Character> variables = new ArrayList<>();
-            String variablesContent = variablesNodeList.item(0).getTextContent();
+            String variablesContent = variablesNodeList.item(mathExpressionsCounter).getTextContent();
             for(int i = 1; i < variablesContent.length(); i += 3) {
                 variables.add(variablesContent.charAt(i));
             }
@@ -71,12 +67,12 @@ public class XMLReader {
         }
         else
         {
-            throw new IOException();
+            return null;
         }
 
-        if (typesNodeList.getLength() > 0) {
+        if (typesNodeList.getLength() > mathExpressionsCounter) {
             ArrayList<Character> types = new ArrayList<>();
-            String typesContent = typesNodeList.item(0).getTextContent();
+            String typesContent = typesNodeList.item(mathExpressionsCounter).getTextContent();
             for(int i = 1; i < typesContent.length(); i += 3) {
                 types.add(typesContent.charAt(i));
             }
@@ -84,12 +80,12 @@ public class XMLReader {
         }
         else
         {
-            throw new IOException();
+            return null;
         }
 
-        if (integersNodeList.getLength() > 0) {
+        if (integersNodeList.getLength() > mathExpressionsCounter) {
             ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
-            String integersContent = integersNodeList.item(0).getTextContent();
+            String integersContent = integersNodeList.item(mathExpressionsCounter).getTextContent();
             String[] Pairs = integersContent.split("\"\"");
             for(String s : Pairs) {
                 integers.add(new ImmutablePair<>(
@@ -100,12 +96,12 @@ public class XMLReader {
         }
         else
         {
-            throw new IOException();
+            return null;
         }
 
-        if (doublesNodeList.getLength() > 0) {
+        if (doublesNodeList.getLength() > mathExpressionsCounter) {
             ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
-            String doublesContent = doublesNodeList.item(0).getTextContent();
+            String doublesContent = doublesNodeList.item(mathExpressionsCounter).getTextContent();
             String[] Pairs = doublesContent.split("\"\"");
             for(String s : Pairs) {
                 doubles.add(new ImmutablePair<>(
@@ -116,9 +112,19 @@ public class XMLReader {
         }
         else
         {
-            throw new IOException();
+            return null;
         }
+        ++mathExpressionsCounter;
         return mathExpression;
+    }
+    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
+        ArrayList<MathExpression> expressions = new ArrayList<>();
+        MathExpression mathExpression;
+        while((mathExpression = ReadMathExpression()) != null)
+        {
+            expressions.add(mathExpression);
+        }
+        return expressions;
     }
 }
 
@@ -146,7 +152,7 @@ class XMLNonAPIReader {
         if (expressionMatcher.find()) {
             mathExpression.setExpression(expressionMatcher.group(1));
         } else {
-            throw new IOException("Expression not found in XML");
+            return null;
         }
 
         Pattern variablesPattern = Pattern.compile("<variables>(.*?)</variables>");
@@ -159,7 +165,7 @@ class XMLNonAPIReader {
             }
             mathExpression.setVariables(variables);
         } else {
-            throw new IOException("Variables not found in XML");
+            return null;
         }
 
         Pattern typesPattern = Pattern.compile("<types>(.*?)</types>");
@@ -172,7 +178,7 @@ class XMLNonAPIReader {
             }
             mathExpression.setTypes(types);
         } else {
-            throw new IOException("Types not found in XML");
+            return null;
         }
 
         Pattern integersPattern = Pattern.compile("<integers>(.*?)</integers>");
@@ -188,7 +194,7 @@ class XMLNonAPIReader {
             }
             mathExpression.setIntegers(integers);
         } else {
-            throw new IOException("Integers not found in XML");
+            return null;
         }
 
         Pattern doublesPattern = Pattern.compile("<doubles>(.*?)</doubles>");
@@ -204,9 +210,89 @@ class XMLNonAPIReader {
             }
             mathExpression.setDoubles(doubles);
         } else {
-            throw new IOException("Doubles not found in XML");
+            return null;
         }
 
         return mathExpression;
+    }
+    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
+        StringBuilder content = new StringBuilder();
+        String line;
+        while ((line = reader.ReadString()) != null) {
+            content.append(line);
+        }
+
+        Pattern expressionPattern = Pattern.compile("<expression>(.*?)</expression>");
+        Matcher expressionMatcher = expressionPattern.matcher(content);
+        Pattern variablesPattern = Pattern.compile("<variables>(.*?)</variables>");
+        Matcher variablesMatcher = variablesPattern.matcher(content);
+        Pattern typesPattern = Pattern.compile("<types>(.*?)</types>");
+        Matcher typesMatcher = typesPattern.matcher(content);
+        Pattern integersPattern = Pattern.compile("<integers>(.*?)</integers>");
+        Matcher integersMatcher = integersPattern.matcher(content);
+        Pattern doublesPattern = Pattern.compile("<doubles>(.*?)</doubles>");
+        Matcher doublesMatcher = doublesPattern.matcher(content);
+        ArrayList<MathExpression> expressions = new ArrayList<>();
+        while(true)
+        {
+            MathExpression mathExpression = new MathExpression();
+            if (expressionMatcher.find()) {
+                mathExpression.setExpression(expressionMatcher.group(1));
+            } else {
+                break;
+            }
+
+            if (variablesMatcher.find()) {
+                String variablesContent = variablesMatcher.group(1);
+                ArrayList<Character> variables = new ArrayList<>();
+                for (int i = 1; i < variablesContent.length(); i += 3) {
+                    variables.add(variablesContent.charAt(i));
+                }
+                mathExpression.setVariables(variables);
+            } else {
+                break;
+            }
+
+            if (typesMatcher.find()) {
+                String typesContent = typesMatcher.group(1);
+                ArrayList<Character> types = new ArrayList<>();
+                for (int i = 1; i < typesContent.length(); i += 3) {
+                    types.add(typesContent.charAt(i));
+                }
+                mathExpression.setTypes(types);
+            } else {
+                break;
+            }
+
+            if (integersMatcher.find()) {
+                String integersContent = integersMatcher.group(1);
+                ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
+                String[] Pairs = integersContent.split("\"\"");
+                for(String s : Pairs) {
+                    integers.add(new ImmutablePair<>(
+                            Integer.parseInt(s.substring(s.indexOf('(') + 1, s.indexOf(','))),
+                            Integer.parseInt(s.substring(s.indexOf(',') + 1, s.indexOf(')')))));
+                }
+                mathExpression.setIntegers(integers);
+            } else {
+                break;
+            }
+
+            if (doublesMatcher.find()) {
+                String doublesContent = doublesMatcher.group(1);
+                ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
+                String[] Pairs = doublesContent.split("\"\"");
+                for(String s : Pairs) {
+                    doubles.add(new ImmutablePair<>(
+                            Double.parseDouble(s.substring(s.indexOf('(') + 1, s.indexOf(','))),
+                            Integer.parseInt(s.substring(s.indexOf(',') + 1, s.indexOf(')')))));
+                }
+                mathExpression.setDoubles(doubles);
+            } else {
+                break;
+            }
+            expressions.add(mathExpression);
+        }
+        return expressions;
     }
 }

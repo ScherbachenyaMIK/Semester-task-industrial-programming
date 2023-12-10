@@ -34,8 +34,12 @@ public class JsonWriter {
     public void WriteMathExpression(MathExpression expression) throws IOException {
         objectMapper.writeValue(File_, expression);
     }
+    public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
+        objectMapper.writeValue(File_, expressions);
+    }
 }
 
+//TODO сброс потока при каждой новой записи
 class JsonNonAPIWriter {
     private BufferedWriter writer;
     JsonNonAPIWriter(String filename) throws IOException {
@@ -92,5 +96,13 @@ class JsonNonAPIWriter {
         content.deleteCharAt(content.length() - 1);
         content.append(" ]\n}");
         writer.write(content.toString());
+    }
+    public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
+        writer.write("[ ");
+        for(MathExpression me : expressions)
+        {
+            WriteMathExpression(me);
+        }
+        writer.write(" ]");
     }
 }

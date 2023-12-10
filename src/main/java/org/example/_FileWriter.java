@@ -22,7 +22,7 @@ public class _FileWriter {
     public void WriteInteger(int i) throws IOException {
         File_.write(Integer.valueOf(i).toString() + ' ');
     }
-    public void MathExpression(MathExpression expression) throws IOException {
+    public void WriteMathExpression(MathExpression expression) throws IOException {
         WriteString(expression.getExpression());
         ArrayList<Character> variables = expression.getVariables();
         ArrayList<Character> types = expression.getTypes();
