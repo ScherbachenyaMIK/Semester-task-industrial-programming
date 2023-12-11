@@ -25,7 +25,7 @@ public class MathExpression {
     @Setter
     @Getter
     private ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
-    static Pattern regex_double = Pattern.compile(" -?(\\d+\\.\\d*[dD]?$|\\.\\d+[dD]?$|[1-9][eE]-?[1-9]\\d*[dD]?$)");
+    static Pattern regex_double = Pattern.compile(" -?(\\d+\\.\\d*[dD]?$|\\.\\d+[dD]?$|[1-9]\\.?\\d*?[eE]-?[1-9]\\d*[dD]?$)");
     static Pattern regex_int = Pattern.compile(" -?\\d+$");
     MathExpression() {
         expression = "";

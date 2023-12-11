@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class _FileWriter {
     private FileWriter File_;
+    private int count = 1;
     _FileWriter(String filename) throws IOException {
         File_ = new FileWriter(filename);
     }
@@ -23,6 +24,7 @@ public class _FileWriter {
         File_.write(Integer.valueOf(i).toString() + ' ');
     }
     public void WriteMathExpression(MathExpression expression) throws IOException {
+        WriteString("Task " + count++ + ": ");
         WriteString(expression.getExpression());
         ArrayList<Character> variables = expression.getVariables();
         ArrayList<Character> types = expression.getTypes();
@@ -45,6 +47,12 @@ public class _FileWriter {
                 }
             }
             WriteString(var.toString());
+        }
+    }
+    public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
+        for(MathExpression expression : expressions)
+        {
+            WriteMathExpression(expression);
         }
     }
 }

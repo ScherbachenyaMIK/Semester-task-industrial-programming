@@ -41,21 +41,100 @@ public class Main {
         al.add("r = -.058d");
         mel.add(new MathExpression("x + y + t + p / r", al));
         al = new ArrayList<>();
-        al.add("x = 6e-6");
+        al.add("x = 6.0e-6");
         al.add("y = -1e5");
         mel.add(new MathExpression("x * y", al));
-        JsonWriter jw = new JsonWriter("input.json");
-        jw.WriteListOfMathExpressions(mel);
-        JsonNonAPIReader jr = new JsonNonAPIReader("input.json");
+        _FileWriter fw = new _FileWriter("input.txt");
+        fw.WriteListOfMathExpressions(mel);
+        fw.CloseFile();
+        _FileReader fr = new _FileReader("input.txt");
         ArrayList<MathExpression> ReadedMEs;
-        ReadedMEs = jr.ReadListOfMathExpressions();
-        jr.CloseJsonNonAPIReader();
-        System.out.println("\nFrom json:");
+        ReadedMEs = fr.ReadListOfMathExpressions();
+        fr.CloseFile();
+        System.out.println("\nFrom txt:");
         System.out.println(ReadedMEs.get(0).getExpression());
         ArrayList<Character> variables = ReadedMEs.get(0).getVariables();
         ArrayList<Character> types = ReadedMEs.get(0).getTypes();
         ArrayList<ImmutablePair<Integer, Integer>> integers = ReadedMEs.get(0).getIntegers();
         ArrayList<ImmutablePair<Double, Integer>> doubles = ReadedMEs.get(0).getDoubles();
+        for(Character c : variables)
+        {
+            System.out.print(c + " ");
+        }
+        System.out.println();
+        for(Character c : types)
+        {
+            System.out.print(c + " ");
+        }
+        System.out.println();
+        for(ImmutablePair<Integer, Integer> p : integers)
+        {
+            System.out.print(p + " ");
+        }
+        System.out.println();
+        for(ImmutablePair<Double, Integer> p : doubles)
+        {
+            System.out.print(p + " ");
+        }
+        System.out.println();
+        System.out.println(ReadedMEs.get(1).getExpression());
+        variables = ReadedMEs.get(1).getVariables();
+        types = ReadedMEs.get(1).getTypes();
+        integers = ReadedMEs.get(1).getIntegers();
+        doubles = ReadedMEs.get(1).getDoubles();
+        for(Character c : variables)
+        {
+            System.out.print(c + " ");
+        }
+        System.out.println();
+        for(Character c : types)
+        {
+            System.out.print(c + " ");
+        }
+        System.out.println();
+        for(ImmutablePair<Integer, Integer> p : integers)
+        {
+            System.out.print(p + " ");
+        }
+        System.out.println();
+        for(ImmutablePair<Double, Integer> p : doubles)
+        {
+            System.out.print(p + " ");
+        }
+        System.out.println();
+        System.out.println(ReadedMEs.get(2).getExpression());
+        variables = ReadedMEs.get(2).getVariables();
+        types = ReadedMEs.get(2).getTypes();
+        integers = ReadedMEs.get(2).getIntegers();
+        doubles = ReadedMEs.get(2).getDoubles();
+        for(Character c : variables)
+        {
+            System.out.print(c + " ");
+        }
+        System.out.println();
+        for(Character c : types)
+        {
+            System.out.print(c + " ");
+        }
+        System.out.println();
+        for(ImmutablePair<Integer, Integer> p : integers)
+        {
+            System.out.print(p + " ");
+        }
+        System.out.println();
+        for(ImmutablePair<Double, Integer> p : doubles)
+        {
+            System.out.print(p + " ");
+        }
+        _BufferedFileReader bfr = new _BufferedFileReader(new _FileReader("input.txt"));
+        ReadedMEs = bfr.ReadListOfMathExpressions();
+        bfr.CloseFile();
+        System.out.println("\nFrom txt with buffered reader:");
+        System.out.println(ReadedMEs.get(0).getExpression());
+        variables = ReadedMEs.get(0).getVariables();
+        types = ReadedMEs.get(0).getTypes();
+        integers = ReadedMEs.get(0).getIntegers();
+        doubles = ReadedMEs.get(0).getDoubles();
         for(Character c : variables)
         {
             System.out.print(c + " ");

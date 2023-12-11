@@ -51,7 +51,7 @@ public class FileChecker {
             return 4;   //JSON
         }
 
-        return 5;   //TXT
+        return 5;   //TXT or encoded file
     }
     static boolean isValidJSON(final String json) {
         boolean valid = false;

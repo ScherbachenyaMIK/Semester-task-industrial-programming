@@ -26,12 +26,26 @@ public class _BufferedFileReader {
     }
     public MathExpression ReadMathExpression() throws IOException {
         String expression = ReadString();
+        if (expression == null)
+        {
+            return null;
+        }
         ArrayList<String> variables = new ArrayList<>();
         String variable;
-        while((variable = ReadString()) != null)
+        while((variable = ReadString()) != null && !variable.startsWith("Task"))
         {
             variables.add(variable);
         }
         return new MathExpression(expression, variables);
+    }
+    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
+        ArrayList<MathExpression> expressions = new ArrayList<>();
+        MathExpression expression;
+        ReadString();
+        while ((expression = ReadMathExpression()) != null)
+        {
+            expressions.add(expression);
+        }
+        return expressions;
     }
 }
