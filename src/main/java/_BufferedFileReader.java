@@ -1,45 +1,25 @@
-package org.example;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.Getter;
-
 import java.io.*;
 import java.util.ArrayList;
 
-public class _FileReader {
-    @Getter
-    private FileReader File_;
-    _FileReader(String filename) throws FileNotFoundException {
-        File_ = new FileReader(filename);
+public class _BufferedFileReader {
+    private BufferedReader File_;
+    _BufferedFileReader(_FileReader fileReader) throws FileNotFoundException {
+        File_ = new BufferedReader(fileReader.getFile_());
     }
-    _FileReader(File EnterFile) throws FileNotFoundException {
-        File_ = new FileReader(EnterFile);
+    _BufferedFileReader(InputStream fileReader, String charsetName) throws FileNotFoundException, UnsupportedEncodingException {  //not working
+        File_ = new BufferedReader(new InputStreamReader(fileReader, charsetName));
     }
-    public void CloseFile() throws IOException{
+    public void CloseFile() throws IOException {
         File_.close();
     }
     public String ReadString() throws IOException {
-        String str = new String();
-        int ch;
-        while (((ch = File_.read()) != '\n') && (ch != -1))
-        {
-            str = str + (char)ch;
-        }
-        if(str.isEmpty())
-        {
-            return null;
-        }
-        if(str.charAt(str.length() - 1) == '\r')
-        {
-            str = str.replaceFirst("\r", "");
-        }
+        String str;
+        str = File_.readLine();
         return str;
     }
     public int ReadInteger() throws IOException {
-        String str = ReadString();
-        if (str.endsWith(" ")) {
-            str = str.replaceFirst("(.*) $", "$1");
-        }
+        String str;
+        str = File_.readLine();
         return Integer.parseInt(str);
     }
     public MathExpression ReadMathExpression() throws IOException {
@@ -59,7 +39,10 @@ public class _FileReader {
     public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
         ArrayList<MathExpression> expressions = new ArrayList<>();
         MathExpression expression;
-        ReadString();
+        String variable = ReadString();
+        if (!variable.startsWith("Task")) {
+            throw new IllegalArgumentException("The text file is damaged or does not match the format");
+        }
         while ((expression = ReadMathExpression()) != null)
         {
             expressions.add(expression);
@@ -67,4 +50,3 @@ public class _FileReader {
         return expressions;
     }
 }
-

@@ -1,7 +1,6 @@
-package org.example;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.udojava.evalex.Expression;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.io.BufferedWriter;
@@ -37,6 +36,18 @@ public class JsonWriter {
     public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
         objectMapper.writeValue(File_, expressions);
     }
+
+    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
+        ArrayList<Result> results = new ArrayList<>();
+        for (MathExpression expression : expressions) {
+            try {
+                results.add(new Result(expression.Result(type)));
+            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+                results.add(new Result('e'));
+            }
+        }
+        objectMapper.writeValue(File_, results);
+    }
 }
 
 //TODO сброс потока при каждой новой записи
@@ -67,7 +78,9 @@ class JsonNonAPIWriter {
         {
             content.append(" \"").append(c).append("\",");
         }
-        content.deleteCharAt(content.length() - 1);
+        if (!variables.isEmpty()) {
+            content.deleteCharAt(content.length() - 1);
+        }
         content.append(" ],\n");
         content.append(tab).append("\"types\" : [");
         ArrayList<Character> types = expression.getTypes();
@@ -75,7 +88,9 @@ class JsonNonAPIWriter {
         {
             content.append(" \"").append(c).append("\",");
         }
-        content.deleteCharAt(content.length() - 1);
+        if (!types.isEmpty()) {
+            content.deleteCharAt(content.length() - 1);
+        }
         content.append(" ],\n");
         content.append(tab).append("\"integers\" : [");
         ArrayList<ImmutablePair<Integer, Integer>> integers = expression.getIntegers();
@@ -84,7 +99,9 @@ class JsonNonAPIWriter {
             content.append(" {\n").append(tab).append(tab).append("\"").append(p.getLeft())
                     .append("\" : ").append(p.getRight()).append("\n").append(tab).append("},");
         }
-        content.deleteCharAt(content.length() - 1);
+        if (!integers.isEmpty()) {
+            content.deleteCharAt(content.length() - 1);
+        }
         content.append(" ],\n");
         content.append(tab).append("\"doubles\" : [");
         ArrayList<ImmutablePair<Double, Integer>> doubles = expression.getDoubles();
@@ -93,7 +110,9 @@ class JsonNonAPIWriter {
             content.append(" {\n").append(tab).append(tab).append("\"").append(p.getLeft())
                     .append("\" : ").append(p.getRight()).append("\n").append(tab).append("},");
         }
-        content.deleteCharAt(content.length() - 1);
+        if (!doubles.isEmpty()) {
+            content.deleteCharAt(content.length() - 1);
+        }
         content.append(" ]\n}");
         writer.write(content.toString());
     }
@@ -104,5 +123,28 @@ class JsonNonAPIWriter {
             WriteMathExpression(me);
         }
         writer.write(" ]");
+    }
+
+    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
+        if (expressions.isEmpty()) {
+            writer.write("[ ]");
+            return;
+        }
+        String tab = "  ";
+        StringBuilder content = new StringBuilder("[ ");
+        ArrayList<Result> results = new ArrayList<>();
+        for (MathExpression expression : expressions) {
+            try {
+                results.add(new Result(expression.Result(type)));
+            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+                results.add(new Result('e'));
+            }
+        }
+        for (Result result : results) {
+            content.append("{\n").append(tab).append("\"result\" : \"").append(result.getResult()).append("\"\n}, ");
+        }
+        content.setLength(content.length() - 2);
+        content.append(" ]");
+        writer.write(content.toString());
     }
 }

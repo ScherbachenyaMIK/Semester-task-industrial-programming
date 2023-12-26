@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>Project_next_gen</artifactId>
+    <artifactId>Semester_task_industrial_programming</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -110,6 +110,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-io</artifactId>
             <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.udojava</groupId>
+            <artifactId>EvalEx</artifactId>
+            <version>2.7</version>
         </dependency>
 
     </dependencies>

@@ -1,5 +1,3 @@
-package org.example;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -136,41 +134,45 @@ class JsonNonAPIReader {
         String expression = nodes.get("expression");
         ArrayList<Character> variables = new ArrayList<>();
         String variablesContent = nodes.get("variables");
-        String[] variablesArray = variablesContent.substring(2, variablesContent.length() - 2)
-                .replaceAll("\"", "").split(", ");
-        for(String s : variablesArray)
-        {
-            variables.add(s.charAt(0));
+        if (!Objects.equals(variablesContent, "[ ]")) {
+            String[] variablesArray = variablesContent.substring(2, variablesContent.length() - 2)
+                    .replaceAll("\"", "").split(", ");
+            for (String s : variablesArray) {
+                variables.add(s.charAt(0));
+            }
         }
         ArrayList<Character> types = new ArrayList<>();
         String typesContent = nodes.get("types");
-        String[] typesArray = typesContent.substring(2, typesContent.length() - 2)
-                .replaceAll("\"", "").split(", ");
-        for(String s : typesArray)
-        {
-            types.add(s.charAt(0));
+        if (!Objects.equals(typesContent, "[ ]")) {
+            String[] typesArray = typesContent.substring(2, typesContent.length() - 2)
+                    .replaceAll("\"", "").split(", ");
+            for (String s : typesArray) {
+                types.add(s.charAt(0));
+            }
         }
         ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
         String integersContent = nodes.get("integers");
-        String[] integersArray = integersContent.substring(2, integersContent.length() - 2)
-                .replaceAll("\"", "").replaceAll(" ", "")
-                .replaceAll("\\{", "").replaceAll("}", "")
-                .split(",");
-        for(String s : integersArray)
-        {
-            String[] pairContent = s.split(":");
-            integers.add(new ImmutablePair<>(Integer.parseInt(pairContent[0]), Integer.parseInt(pairContent[1])));
+        if (!Objects.equals(integersContent, "[ ]")) {
+            String[] integersArray = integersContent.substring(2, integersContent.length() - 2)
+                    .replaceAll("\"", "").replaceAll(" ", "")
+                    .replaceAll("\\{", "").replaceAll("}", "")
+                    .split(",");
+            for (String s : integersArray) {
+                String[] pairContent = s.split(":");
+                integers.add(new ImmutablePair<>(Integer.parseInt(pairContent[0]), Integer.parseInt(pairContent[1])));
+            }
         }
         ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
         String doublesContent = nodes.get("doubles");
-        String[] doublesArray = doublesContent.substring(2, doublesContent.length() - 2)
-                .replaceAll("\"", "").replaceAll(" ", "")
-                .replaceAll("\\{", "").replaceAll("}", "")
-                .split(",");
-        for(String s : doublesArray)
-        {
-            String[] pairContent = s.split(":");
-            doubles.add(new ImmutablePair<>(Double.parseDouble(pairContent[0]), Integer.parseInt(pairContent[1])));
+        if (!Objects.equals(doublesContent, "[ ]")) {
+            String[] doublesArray = doublesContent.substring(2, doublesContent.length() - 2)
+                    .replaceAll("\"", "").replaceAll(" ", "")
+                    .replaceAll("\\{", "").replaceAll("}", "")
+                    .split(",");
+            for (String s : doublesArray) {
+                String[] pairContent = s.split(":");
+                doubles.add(new ImmutablePair<>(Double.parseDouble(pairContent[0]), Integer.parseInt(pairContent[1])));
+            }
         }
 
         MathExpression mathExpression = new MathExpression();

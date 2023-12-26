@@ -1,5 +1,4 @@
-package org.example;
-
+import com.udojava.evalex.Expression;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.io.*;
@@ -53,6 +52,19 @@ public class _FileWriter {
         for(MathExpression expression : expressions)
         {
             WriteMathExpression(expression);
+        }
+    }
+
+    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
+        for (MathExpression expression : expressions) {
+            try {
+                WriteString("Task " + count++ + ":");
+                WriteString(expression.Result(type));
+            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+                WriteString("Error while computing expression!");
+                WriteString("Original expression:");
+                WriteMathExpression(expression);
+            }
         }
     }
 }

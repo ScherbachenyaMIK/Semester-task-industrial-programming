@@ -1,5 +1,3 @@
-package org.example;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -217,7 +215,10 @@ class XMLNonAPIReader {
     }
     public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
         StringBuilder content = new StringBuilder();
-        String line;
+        String line = reader.ReadString();
+        if (!line.equals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>")) {
+            throw new IOException("The .xml file is damaged or does not match the format");
+        }
         while ((line = reader.ReadString()) != null) {
             content.append(line);
         }
@@ -244,50 +245,58 @@ class XMLNonAPIReader {
 
             if (variablesMatcher.find()) {
                 String variablesContent = variablesMatcher.group(1);
-                ArrayList<Character> variables = new ArrayList<>();
-                for (int i = 1; i < variablesContent.length(); i += 3) {
-                    variables.add(variablesContent.charAt(i));
+                if (!variablesContent.equals("\"\"")) {
+                    ArrayList<Character> variables = new ArrayList<>();
+                    for (int i = 1; i < variablesContent.length(); i += 3) {
+                        variables.add(variablesContent.charAt(i));
+                    }
+                    mathExpression.setVariables(variables);
                 }
-                mathExpression.setVariables(variables);
             } else {
                 break;
             }
 
             if (typesMatcher.find()) {
                 String typesContent = typesMatcher.group(1);
-                ArrayList<Character> types = new ArrayList<>();
-                for (int i = 1; i < typesContent.length(); i += 3) {
-                    types.add(typesContent.charAt(i));
+                if (!typesContent.equals("\"\"")) {
+                    ArrayList<Character> types = new ArrayList<>();
+                    for (int i = 1; i < typesContent.length(); i += 3) {
+                        types.add(typesContent.charAt(i));
+                    }
+                    mathExpression.setTypes(types);
                 }
-                mathExpression.setTypes(types);
             } else {
                 break;
             }
 
             if (integersMatcher.find()) {
                 String integersContent = integersMatcher.group(1);
-                ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
-                String[] Pairs = integersContent.split("\"\"");
-                for(String s : Pairs) {
-                    integers.add(new ImmutablePair<>(
-                            Integer.parseInt(s.substring(s.indexOf('(') + 1, s.indexOf(','))),
-                            Integer.parseInt(s.substring(s.indexOf(',') + 1, s.indexOf(')')))));
+                if (!integersContent.equals("\"\"")) {
+                    ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
+                    String[] Pairs = integersContent.split("\"\"");
+                    for (String s : Pairs) {
+                        integers.add(new ImmutablePair<>(
+                                Integer.parseInt(s.substring(s.indexOf('(') + 1, s.indexOf(','))),
+                                Integer.parseInt(s.substring(s.indexOf(',') + 1, s.indexOf(')')))));
+                    }
+                    mathExpression.setIntegers(integers);
                 }
-                mathExpression.setIntegers(integers);
             } else {
                 break;
             }
 
             if (doublesMatcher.find()) {
                 String doublesContent = doublesMatcher.group(1);
-                ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
-                String[] Pairs = doublesContent.split("\"\"");
-                for(String s : Pairs) {
-                    doubles.add(new ImmutablePair<>(
-                            Double.parseDouble(s.substring(s.indexOf('(') + 1, s.indexOf(','))),
-                            Integer.parseInt(s.substring(s.indexOf(',') + 1, s.indexOf(')')))));
+                if (!doublesContent.equals("\"\"")) {
+                    ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
+                    String[] Pairs = doublesContent.split("\"\"");
+                    for (String s : Pairs) {
+                        doubles.add(new ImmutablePair<>(
+                                Double.parseDouble(s.substring(s.indexOf('(') + 1, s.indexOf(','))),
+                                Integer.parseInt(s.substring(s.indexOf(',') + 1, s.indexOf(')')))));
+                    }
+                    mathExpression.setDoubles(doubles);
                 }
-                mathExpression.setDoubles(doubles);
             } else {
                 break;
             }

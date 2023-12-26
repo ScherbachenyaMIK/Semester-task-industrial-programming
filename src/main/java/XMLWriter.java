@@ -1,5 +1,3 @@
-package org.example;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -7,6 +5,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.udojava.evalex.Expression;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -111,6 +110,27 @@ public class XMLWriter {
             WriteMathExpression(me);
         }
     }
+    public void WriteResult(Result result) {
+        Element main = document.createElement("Result");
+        root.appendChild(main);
+
+        Element resultElement = document.createElement("result");
+        resultElement.appendChild(document.createTextNode(result.getResult()));
+        main.appendChild(resultElement);
+    }
+    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) {
+        ArrayList<Result> results = new ArrayList<>();
+        for (MathExpression expression : expressions) {
+            try {
+                results.add(new Result(expression.Result(type)));
+            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+                results.add(new Result('e'));
+            }
+        }
+        for (Result result : results) {
+            WriteResult(result);
+        }
+    }
 }
 
 //TODO сброс потока при каждой новой записи
@@ -160,6 +180,26 @@ class XMLNonAPIWriter {
         for(MathExpression me : expressions)
         {
             WriteMathExpression(me);
+        }
+    }
+    public void WriteResult(Result result) throws IOException {
+        StringBuilder content = new StringBuilder();
+        content.append("  <Result>\n")
+                .append("    <result>").append(result.getResult()).append("</result>\n")
+                .append("  </Result>\n");
+        writer.write(content.toString());
+    }
+    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
+        ArrayList<Result> results = new ArrayList<>();
+        for (MathExpression expression : expressions) {
+            try {
+                results.add(new Result(expression.Result(type)));
+            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+                results.add(new Result('e'));
+            }
+        }
+        for (Result result : results) {
+            WriteResult(result);
         }
     }
 }

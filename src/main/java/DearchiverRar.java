@@ -1,5 +1,3 @@
-package org.example;
-
 import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.util.ArrayList;
