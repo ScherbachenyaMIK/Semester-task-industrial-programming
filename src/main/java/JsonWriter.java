@@ -42,7 +42,7 @@ public class JsonWriter {
         for (MathExpression expression : expressions) {
             try {
                 results.add(new Result(expression.Result(type)));
-            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+            } catch (IOException | Expression.ExpressionException | IllegalArgumentException exception) {
                 results.add(new Result('e'));
             }
         }
@@ -136,7 +136,7 @@ class JsonNonAPIWriter {
         for (MathExpression expression : expressions) {
             try {
                 results.add(new Result(expression.Result(type)));
-            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+            } catch (IOException | Expression.ExpressionException | IllegalArgumentException exception) {
                 results.add(new Result('e'));
             }
         }

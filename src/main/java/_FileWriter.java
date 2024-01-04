@@ -60,7 +60,7 @@ public class _FileWriter {
             try {
                 WriteString("Task " + count++ + ":");
                 WriteString(expression.Result(type));
-            } catch (IOException | NumberFormatException | Expression.ExpressionException exception) {
+            } catch (IOException | Expression.ExpressionException | IllegalArgumentException exception) {
                 WriteString("Error while computing expression!");
                 WriteString("Original expression:");
                 WriteMathExpression(expression);

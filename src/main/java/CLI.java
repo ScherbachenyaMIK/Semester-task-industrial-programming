@@ -3,7 +3,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.spec.InvalidParameterSpecException;
@@ -378,16 +377,14 @@ public class CLI {
                     System.out.println("> Choose calculator:");
                     System.out.println("> 1) Regex");
                     System.out.println("> 2) API");
-                    //TODO Third calculator
-                    //System.out.println("> 3) Reversive Polish Notation");
+                    System.out.println("> 3) Reversive Polish Notation");
                     System.out.print("> ");
                     calculator_type = scanner.nextInt();
                     switch (calculator_type) {
                         case 1:
-                            break;
                         case 2:
-                            break;
                         case 3:
+                            break;
                         default:
                             RefreshConsole();
                             System.out.println("> Incorrect input!");
@@ -407,6 +404,7 @@ public class CLI {
                         RefreshConsole();
                         System.out.println("> File successfully written");
                         System.out.println("> Result in file " + filename);
+                        mathExpressions.clear();
                         correct_input = true;
                         break;
                     case 2:
@@ -429,6 +427,7 @@ public class CLI {
                         RefreshConsole();
                         System.out.println("> File successfully written");
                         System.out.println("> Result in file " + filename);
+                        mathExpressions.clear();
                         correct_input = true;
                         break;
                     case 3:
@@ -461,6 +460,7 @@ public class CLI {
                         RefreshConsole();
                         System.out.println("> File successfully written");
                         System.out.println("> Result in file " + filename);
+                        mathExpressions.clear();
                         correct_input = true;
                         break;
                     case 4:
@@ -507,7 +507,7 @@ public class CLI {
                         }
                         break;
                     case 6:
-                        System.out.println("> Enter directory/file path: ");
+                        System.out.println("> Enter file path: ");
                         System.out.print("> ");
                         directoryPath = scanner.next();
                         Encoder enc = new Encoder(directoryPath, filename);
