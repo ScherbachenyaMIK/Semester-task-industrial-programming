@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class _FileReader {
     @Getter
     private FileReader File_;
+    private StringBuilder remainder = new StringBuilder();
+    private static final int BUFFER_SIZE = 1024;
     _FileReader(String filename) throws FileNotFoundException {
         File_ = new FileReader(filename);
     }
@@ -16,21 +18,26 @@ public class _FileReader {
         File_.close();
     }
     public String ReadString() throws IOException {
-        String str = new String();
-        int ch;
-        while (((ch = File_.read()) != '\n') && (ch != -1))
-        {
-            str = str + (char)ch;
+        char[] buffer = new char[BUFFER_SIZE];
+        int charsRead;
+
+        charsRead = File_.read(buffer);
+        if (charsRead == -1) {
+            if (remainder.length() == 0) {
+                return null;
+            }
+            String lastLine = remainder.substring(0, remainder.indexOf("\n"));
+            remainder = remainder.replace(0, remainder.indexOf("\n") + 1, "");
+            return lastLine;
         }
-        if(str.isEmpty())
-        {
-            return null;
+        remainder.append(new String(buffer).substring(0, charsRead) + "\n");
+        int i;
+        while ((i = remainder.indexOf("\n\n")) != -1) {
+            remainder.replace(i, i + 2, "\n");
         }
-        if(str.charAt(str.length() - 1) == '\r')
-        {
-            str = str.replaceFirst("\r", "");
-        }
-        return str;
+        String lastLine = remainder.substring(0, remainder.indexOf("\n"));
+        remainder = remainder.replace(0, remainder.indexOf("\n") + 1, "");
+        return lastLine;
     }
     public int ReadInteger() throws IOException {
         String str = ReadString();
@@ -40,10 +47,17 @@ public class _FileReader {
         return Integer.parseInt(str);
     }
     public MathExpression ReadMathExpression() throws IOException {
+        String task = ReadString();
+        if (task == null) {
+            return null;
+        }
+        if (!task.startsWith("Task")) {
+            throw new IllegalArgumentException("The text file is damaged or does not match the format");
+        }
         String expression = ReadString();
         if (expression == null)
         {
-            return null;
+            throw new IllegalArgumentException("The text file is damaged or does not match the format");
         }
         ArrayList<String> variables = new ArrayList<>();
         String variable;
@@ -51,15 +65,14 @@ public class _FileReader {
         {
             variables.add(variable);
         }
+        if (variable != null) {
+            remainder.insert(0, variable + "\n");
+        }
         return new MathExpression(expression, variables);
     }
     public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
         ArrayList<MathExpression> expressions = new ArrayList<>();
         MathExpression expression;
-        String variable = ReadString();
-        if (!variable.startsWith("Task")) {
-            throw new IllegalArgumentException("The text file is damaged or does not match the format");
-        }
         while ((expression = ReadMathExpression()) != null)
         {
             expressions.add(expression);

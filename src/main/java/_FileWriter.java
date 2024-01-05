@@ -23,7 +23,7 @@ public class _FileWriter {
         File_.write(Integer.valueOf(i).toString() + ' ');
     }
     public void WriteMathExpression(MathExpression expression) throws IOException {
-        WriteString("Task " + count++ + ": ");
+        WriteString("Task " + count++ + ":");
         WriteString(expression.getExpression());
         ArrayList<Character> variables = expression.getVariables();
         ArrayList<Character> types = expression.getTypes();
@@ -63,6 +63,7 @@ public class _FileWriter {
             } catch (IOException | Expression.ExpressionException | IllegalArgumentException exception) {
                 WriteString("Error while computing expression!");
                 WriteString("Original expression:");
+                --count;
                 WriteMathExpression(expression);
             }
         }

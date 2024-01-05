@@ -99,6 +99,7 @@ public class MathExpression {
         }
         throw new IllegalArgumentException("Invalid argument");
     }
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder("expression : " + expression + "\nvariables:\n");
         for(int i = 0; i < variables.size(); ++i) {
@@ -117,6 +118,14 @@ public class MathExpression {
             }
         }
         return result.toString();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MathExpression)) {
+            return false;
+        }
+
+        return this.toString().equals(obj.toString());
     }
     private static class RegexCalculator
     {
