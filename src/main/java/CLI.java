@@ -2,6 +2,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -197,7 +198,7 @@ public class CLI {
                             }
                             correct_input = true;
                         }
-                        catch (IOException | NullPointerException exception) {
+                        catch (IllegalArgumentException | FileNotFoundException exception) {
                             RefreshConsole();
                             System.out.println("> The .json file is damaged or does not match the format");
                             System.out.println("> The file was not readed");

@@ -30,18 +30,50 @@ public class JsonReader {
         objectMapper = new ObjectMapper();
         File_ = EnterFile;
     }
-    public String ReadString() throws IOException {
-        String str = new String();
-        return objectMapper.readValue(File_, str.getClass());
+    public String ReadString() throws IllegalArgumentException, FileNotFoundException {
+        try {
+            return objectMapper.readValue(File_, String.class);
+        }
+        catch (FileNotFoundException exception) {
+            throw new FileNotFoundException(exception.getMessage());
+        }
+        catch (IOException | NullPointerException exception) {
+            throw new IllegalArgumentException("Cannot deserialize Integer");
+        }
     }
-    public int ReadInteger() throws IOException {
-        return objectMapper.readValue(File_, Integer.class);
+    public int ReadInteger() throws IllegalArgumentException, FileNotFoundException {
+        try {
+            return objectMapper.readValue(File_, Integer.class);
+        }
+        catch (FileNotFoundException exception) {
+            throw new FileNotFoundException(exception.getMessage());
+        }
+        catch (IOException | NullPointerException exception) {
+            throw new IllegalArgumentException("Cannot deserialize Integer");
+        }
     }
-    public MathExpression ReadMathExpression() throws IOException {
-        return objectMapper.readValue(File_, MathExpression.class);
+    public MathExpression ReadMathExpression() throws IllegalArgumentException, FileNotFoundException {
+        try {
+
+            return objectMapper.readValue(File_, MathExpression.class);
+        }
+        catch (FileNotFoundException exception) {
+            throw new FileNotFoundException(exception.getMessage());
+        }
+        catch (IOException | NullPointerException exception) {
+            throw new IllegalArgumentException("Cannot deserialize math expression");
+        }
     }
-    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
-        return objectMapper.readValue(File_, new TypeReference<ArrayList<MathExpression>>() {});
+    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IllegalArgumentException, FileNotFoundException {
+        try {
+            return objectMapper.readValue(File_, new TypeReference<ArrayList<MathExpression>>() {});
+        }
+        catch (FileNotFoundException exception) {
+            throw new FileNotFoundException(exception.getMessage());
+        }
+        catch (IOException | NullPointerException exception) {
+            throw new IllegalArgumentException("Cannot deserialize list of math expressions");
+        }
     }
 }
 
@@ -100,112 +132,44 @@ class JsonNonAPIReader {
     private _BufferedFileReader reader;
     JsonNonAPIReader(String filename) throws FileNotFoundException {
         File File_ = new File(filename);
+        if (!File_.exists()) {
+            throw new FileNotFoundException("File not found!");
+        }
         reader = new _BufferedFileReader(new _FileReader(File_));
     }
     public void CloseJsonNonAPIReader() throws IOException {
         reader.CloseFile();
     }
     public String ReadString() throws IOException {
-        return reader.ReadString();
+        String result = reader.ReadString();
+        if (result != null) {
+            result = result.replaceFirst("^\"", "")
+                    .replaceFirst("\"$", "");
+        }
+        return result;
     }
-    public int ReadInteger() throws IOException {
-        return Integer.parseInt(ReadString());
+    public int ReadInteger() throws IllegalArgumentException {
+        try {
+            return Integer.parseInt(ReadString());
+        }
+        catch (IOException | NullPointerException exception) {
+            throw new IllegalArgumentException("Cannot deserialize Integer");
+        }
     }
-    public MathExpression ReadMathExpression() throws IOException {
-        StringBuilder data = new StringBuilder();
-        String line;
-        while ((line = ReadString()) != null)
-        {
-            data.append(line);
-            if (line.charAt(line.length() - 1) == ',')
-            {
-                data.append("\n");
+    public MathExpression ReadMathExpression() throws IllegalArgumentException {
+        try {
+            StringBuilder data = new StringBuilder();
+            String line;
+            while ((line = ReadString()) != null) {
+                data.append(line);
+                if (line.charAt(line.length() - 1) == ',') {
+                    data.append("\n");
+                }
             }
-        }
-        data.insert(data.length() - 1, '\n');
-        String tab = "  ";
-        Pattern expression_pattern = Pattern.compile(tab + "\"(.*?)\" : (.*?)(,\n|\n})");
-        Matcher matcher = expression_pattern.matcher(data);
-        HashMap<String, String> nodes = new HashMap<>();
-        while (matcher.find())
-        {
-            nodes.put(matcher.group(1), matcher.group(2));
-        }
-        String expression = nodes.get("expression");
-        ArrayList<Character> variables = new ArrayList<>();
-        String variablesContent = nodes.get("variables");
-        if (!Objects.equals(variablesContent, "[ ]")) {
-            String[] variablesArray = variablesContent.substring(2, variablesContent.length() - 2)
-                    .replaceAll("\"", "").split(", ");
-            for (String s : variablesArray) {
-                variables.add(s.charAt(0));
-            }
-        }
-        ArrayList<Character> types = new ArrayList<>();
-        String typesContent = nodes.get("types");
-        if (!Objects.equals(typesContent, "[ ]")) {
-            String[] typesArray = typesContent.substring(2, typesContent.length() - 2)
-                    .replaceAll("\"", "").split(", ");
-            for (String s : typesArray) {
-                types.add(s.charAt(0));
-            }
-        }
-        ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
-        String integersContent = nodes.get("integers");
-        if (!Objects.equals(integersContent, "[ ]")) {
-            String[] integersArray = integersContent.substring(2, integersContent.length() - 2)
-                    .replaceAll("\"", "").replaceAll(" ", "")
-                    .replaceAll("\\{", "").replaceAll("}", "")
-                    .split(",");
-            for (String s : integersArray) {
-                String[] pairContent = s.split(":");
-                integers.add(new ImmutablePair<>(Integer.parseInt(pairContent[0]), Integer.parseInt(pairContent[1])));
-            }
-        }
-        ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
-        String doublesContent = nodes.get("doubles");
-        if (!Objects.equals(doublesContent, "[ ]")) {
-            String[] doublesArray = doublesContent.substring(2, doublesContent.length() - 2)
-                    .replaceAll("\"", "").replaceAll(" ", "")
-                    .replaceAll("\\{", "").replaceAll("}", "")
-                    .split(",");
-            for (String s : doublesArray) {
-                String[] pairContent = s.split(":");
-                doubles.add(new ImmutablePair<>(Double.parseDouble(pairContent[0]), Integer.parseInt(pairContent[1])));
-            }
-        }
-
-        MathExpression mathExpression = new MathExpression();
-        mathExpression.setExpression(expression.substring(1, expression.length() - 1));
-        mathExpression.setVariables(variables);
-        mathExpression.setTypes(types);
-        mathExpression.setIntegers(integers);
-        mathExpression.setDoubles(doubles);
-        return mathExpression;
-    }
-    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
-        ArrayList<MathExpression> expressions = new ArrayList<>();
-        StringBuilder data = new StringBuilder();
-        String line;
-        while ((line = ReadString()) != null)
-        {
-            if (line.equals("}, {"))
-            {
-                data.append("\n\n");
-            }
-            data.append(line);
-            if (line.charAt(line.length() - 1) == ',')
-            {
-                data.append("\n");
-            }
-        }
-        data.insert(data.length() - 3, "\n");
-        String[] mathExpressionsContent = data.substring(3, data.length() - 3).split("\n}, \\{");
-        String tab = "  ";
-        Pattern expression_pattern = Pattern.compile(tab + "\"(.*?)\" : (.*?)(,\n|\n)");
-        for (String expressionContent : mathExpressionsContent)
-        {
-            Matcher matcher = expression_pattern.matcher(expressionContent);
+            data.insert(data.length() - 1, '\n');
+            String tab = "  ";
+            Pattern expression_pattern = Pattern.compile(tab + "\"(.*?)\" : (.*?)(,\n|\n})");
+            Matcher matcher = expression_pattern.matcher(data);
             HashMap<String, String> nodes = new HashMap<>();
             while (matcher.find()) {
                 nodes.put(matcher.group(1), matcher.group(2));
@@ -213,8 +177,7 @@ class JsonNonAPIReader {
             String expression = nodes.get("expression");
             ArrayList<Character> variables = new ArrayList<>();
             String variablesContent = nodes.get("variables");
-            if (!Objects.equals(variablesContent, "[ ]"))
-            {
+            if (!Objects.equals(variablesContent, "[ ]")) {
                 String[] variablesArray = variablesContent.substring(2, variablesContent.length() - 2)
                         .replaceAll("\"", "").split(", ");
                 for (String s : variablesArray) {
@@ -261,8 +224,97 @@ class JsonNonAPIReader {
             mathExpression.setTypes(types);
             mathExpression.setIntegers(integers);
             mathExpression.setDoubles(doubles);
-            expressions.add(mathExpression);
+            return mathExpression;
         }
-        return expressions;
+        catch (IOException | NullPointerException exception) {
+            throw new IllegalArgumentException("Cannot deserialize math expression");
+        }
+    }
+    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IllegalArgumentException {
+        try {
+            ArrayList<MathExpression> expressions = new ArrayList<>();
+            StringBuilder data = new StringBuilder();
+            String line;
+            while ((line = ReadString()) != null)
+            {
+                if (line.equals("}, {"))
+                {
+                    data.append("\n\n");
+                }
+                data.append(line);
+                if (line.charAt(line.length() - 1) == ',')
+                {
+                    data.append("\n");
+                }
+            }
+            data.insert(data.length() - 3, "\n");
+            String[] mathExpressionsContent = data.substring(3, data.length() - 3).split("\n}, \\{");
+            String tab = "  ";
+            Pattern expression_pattern = Pattern.compile(tab + "\"(.*?)\" : (.*?)(,\n|\n)");
+            for (String expressionContent : mathExpressionsContent)
+            {
+                Matcher matcher = expression_pattern.matcher(expressionContent);
+                HashMap<String, String> nodes = new HashMap<>();
+                while (matcher.find()) {
+                    nodes.put(matcher.group(1), matcher.group(2));
+                }
+                String expression = nodes.get("expression");
+                ArrayList<Character> variables = new ArrayList<>();
+                String variablesContent = nodes.get("variables");
+                if (!Objects.equals(variablesContent, "[ ]"))
+                {
+                    String[] variablesArray = variablesContent.substring(2, variablesContent.length() - 2)
+                            .replaceAll("\"", "").split(", ");
+                    for (String s : variablesArray) {
+                        variables.add(s.charAt(0));
+                    }
+                }
+                ArrayList<Character> types = new ArrayList<>();
+                String typesContent = nodes.get("types");
+                if (!Objects.equals(typesContent, "[ ]")) {
+                    String[] typesArray = typesContent.substring(2, typesContent.length() - 2)
+                            .replaceAll("\"", "").split(", ");
+                    for (String s : typesArray) {
+                        types.add(s.charAt(0));
+                    }
+                }
+                ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
+                String integersContent = nodes.get("integers");
+                if (!Objects.equals(integersContent, "[ ]")) {
+                    String[] integersArray = integersContent.substring(2, integersContent.length() - 2)
+                            .replaceAll("\"", "").replaceAll(" ", "")
+                            .replaceAll("\\{", "").replaceAll("}", "")
+                            .split(",");
+                    for (String s : integersArray) {
+                        String[] pairContent = s.split(":");
+                        integers.add(new ImmutablePair<>(Integer.parseInt(pairContent[0]), Integer.parseInt(pairContent[1])));
+                    }
+                }
+                ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
+                String doublesContent = nodes.get("doubles");
+                if (!Objects.equals(doublesContent, "[ ]")) {
+                    String[] doublesArray = doublesContent.substring(2, doublesContent.length() - 2)
+                            .replaceAll("\"", "").replaceAll(" ", "")
+                            .replaceAll("\\{", "").replaceAll("}", "")
+                            .split(",");
+                    for (String s : doublesArray) {
+                        String[] pairContent = s.split(":");
+                        doubles.add(new ImmutablePair<>(Double.parseDouble(pairContent[0]), Integer.parseInt(pairContent[1])));
+                    }
+                }
+
+                MathExpression mathExpression = new MathExpression();
+                mathExpression.setExpression(expression.substring(1, expression.length() - 1));
+                mathExpression.setVariables(variables);
+                mathExpression.setTypes(types);
+                mathExpression.setIntegers(integers);
+                mathExpression.setDoubles(doubles);
+                expressions.add(mathExpression);
+            }
+            return expressions;
+        }
+        catch (IOException | NullPointerException exception) {
+            throw new IllegalArgumentException("Cannot deserialize math expression");
+        }
     }
 }
