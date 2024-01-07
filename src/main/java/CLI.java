@@ -248,7 +248,7 @@ public class CLI {
                         break;
                     case 5:
                         dearchiversRar.add(new DearchiverRar(filename));
-                        dearchived_files = dearchiversRar.get(dearchiversRar.size() - 1).Dearchive();
+                        dearchived_files = dearchiversRar.get(dearchiversRar.size() - 1).Dearchive();   //TODO Resolve this catch
                         RefreshConsole();
                         System.out.println("> File has been dearchived");
                         System.out.println("> file(s) collected in folder:");
@@ -323,7 +323,7 @@ public class CLI {
                 System.in.read();
                 RefreshConsole();
             }
-            catch (ParserConfigurationException | InterruptedException | SAXException exception) {
+            catch (IllegalArgumentException exception) {
                 RefreshConsole();
                 System.out.println("> Error while working with xml file!");
                 System.out.println("> Try again");
@@ -331,6 +331,8 @@ public class CLI {
                 System.out.print("> ");
                 System.in.read();
                 RefreshConsole();
+            } catch (InterruptedException e) {  //TODO Resolve this catch
+                throw new RuntimeException(e);
             }
         }
 
@@ -442,21 +444,13 @@ public class CLI {
                         } else if (writer_type == 'n') {
                             XMLWriter xw = new XMLWriter(filename);
                             xw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                            try {
-                                xw.CloseXMLWriter();
-                            } catch (TransformerException exception) {
-                                throw new IOException(exception);
-                            }
+                            xw.CloseXMLWriter();
                         } else {
                             System.out.println("> Entered character incorrect");
                             System.out.println("> As default API Reader have been chosen");
                             XMLWriter xw = new XMLWriter(filename);
                             xw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                            try {
-                                xw.CloseXMLWriter();
-                            } catch (TransformerException exception) {
-                                throw new IOException(exception);
-                            }
+                            xw.CloseXMLWriter();
                         }
                         RefreshConsole();
                         System.out.println("> File successfully written");
@@ -569,7 +563,7 @@ public class CLI {
                 System.in.read();
                 RefreshConsole();
             }
-            catch (ParserConfigurationException /*| TransformerException | InvocationTargetException | IllegalAccessException*/ exception) {
+            catch (IllegalArgumentException exception) {
                 RefreshConsole();
                 System.out.println("> Error while working with xml file!");
                 System.out.println("> Try again");

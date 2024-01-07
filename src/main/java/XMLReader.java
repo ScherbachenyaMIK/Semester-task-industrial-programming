@@ -18,28 +18,48 @@ public class XMLReader {
     private int mathExpressionsCounter = 0;
     Document document;
     Element root;
-    public XMLReader(String filename) throws IOException, ParserConfigurationException, SAXException {
+    public XMLReader(String filename) throws IllegalArgumentException, FileNotFoundException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        document = documentBuilder.parse(filename);
+        DocumentBuilder documentBuilder;
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            document = documentBuilder.parse(filename);
+        } catch (SAXException e) {
+            throw new IllegalArgumentException("File content does not match xml document");
+        } catch (IOException e) {
+            throw new FileNotFoundException("Unable to load or read file");
+        }
         root = document.getDocumentElement();
     }
 
-    public String ReadString() {
+    public String ReadString() throws IllegalArgumentException {
         NodeList nodeList = document.getElementsByTagName("Data");
         if (nodeList.getLength() > stringCounter) {
             return nodeList.item(stringCounter++).getTextContent();
         }
-        return null;
+        else {
+            throw new IllegalArgumentException("Unable to read String");
+        }
     }
-    public int ReadInteger() throws ParserConfigurationException, IOException, SAXException {
+    public int ReadInteger() throws IllegalArgumentException {
         String data = ReadString();
         if (data != null) {
-            return Integer.parseInt(data);
+            try {
+                return Integer.parseInt(data);
+            }
+            catch (NumberFormatException exception) {
+                throw new IllegalArgumentException("Unable to read Integer");
+            }
         }
-        return 0;
+        else {
+            throw new IllegalArgumentException("Unable to read Integer");
+        }
     }
-    public MathExpression ReadMathExpression() throws IOException {
+    public MathExpression ReadMathExpression() throws IllegalArgumentException {
         NodeList expressionNodeList = root.getElementsByTagName("expression");
         NodeList variablesNodeList = root.getElementsByTagName("variables");
         NodeList typesNodeList = root.getElementsByTagName("types");
@@ -52,7 +72,7 @@ public class XMLReader {
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         if (variablesNodeList.getLength() > mathExpressionsCounter) {
@@ -65,7 +85,7 @@ public class XMLReader {
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         if (typesNodeList.getLength() > mathExpressionsCounter) {
@@ -78,7 +98,7 @@ public class XMLReader {
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         if (integersNodeList.getLength() > mathExpressionsCounter) {
@@ -94,7 +114,7 @@ public class XMLReader {
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         if (doublesNodeList.getLength() > mathExpressionsCounter) {
@@ -110,7 +130,7 @@ public class XMLReader {
         }
         else
         {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
         ++mathExpressionsCounter;
         return mathExpression;
@@ -118,9 +138,18 @@ public class XMLReader {
     public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
         ArrayList<MathExpression> expressions = new ArrayList<>();
         MathExpression mathExpression;
-        while((mathExpression = ReadMathExpression()) != null)
-        {
-            expressions.add(mathExpression);
+        try {
+            while(true)
+            {
+                mathExpression = ReadMathExpression();
+                expressions.add(mathExpression);
+            }
+        }
+        catch (IllegalArgumentException exception) {
+
+        }
+        if (expressions.isEmpty()) {
+            throw new IllegalArgumentException("Unable to read math expression");
         }
         return expressions;
     }
@@ -131,12 +160,39 @@ class XMLNonAPIReader {
 
     public XMLNonAPIReader(String filename) throws FileNotFoundException {
         File File_ = new File(filename);
+        if (!File_.exists()) {
+            throw new FileNotFoundException("Unable to load file");
+        }
         reader = new _BufferedFileReader(new _FileReader(File_));
     }
     public void CloseXMLNonAPIReader() throws IOException {
         reader.CloseFile();
     }
-    public MathExpression ReadMathExpression() throws IOException {
+    public String ReadString() throws IOException {
+        StringBuilder content = new StringBuilder();
+        String line;
+        while ((line = reader.ReadString()) != null) {
+            content.append(line);
+        }
+
+        Pattern StringPattern = Pattern.compile("<Data>(.*?)</Data>");
+        Matcher StringMatcher = StringPattern.matcher(content);
+        if (StringMatcher.find()) {
+            return StringMatcher.group(1);
+        }
+        else {
+            throw new IllegalArgumentException("Unable to read String");
+        }
+    }
+    public int ReadInteger() throws IllegalArgumentException {
+        try {
+            return Integer.parseInt(ReadString());
+        }
+        catch (NumberFormatException | IOException exception) {
+            throw new IllegalArgumentException("Unable to read Integer");
+        }
+    }
+    public MathExpression ReadMathExpression() throws IllegalArgumentException, IOException {
         StringBuilder content = new StringBuilder();
         String line;
         while ((line = reader.ReadString()) != null) {
@@ -150,7 +206,7 @@ class XMLNonAPIReader {
         if (expressionMatcher.find()) {
             mathExpression.setExpression(expressionMatcher.group(1));
         } else {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         Pattern variablesPattern = Pattern.compile("<variables>(.*?)</variables>");
@@ -163,7 +219,7 @@ class XMLNonAPIReader {
             }
             mathExpression.setVariables(variables);
         } else {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         Pattern typesPattern = Pattern.compile("<types>(.*?)</types>");
@@ -176,7 +232,7 @@ class XMLNonAPIReader {
             }
             mathExpression.setTypes(types);
         } else {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         Pattern integersPattern = Pattern.compile("<integers>(.*?)</integers>");
@@ -192,7 +248,7 @@ class XMLNonAPIReader {
             }
             mathExpression.setIntegers(integers);
         } else {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         Pattern doublesPattern = Pattern.compile("<doubles>(.*?)</doubles>");
@@ -208,7 +264,7 @@ class XMLNonAPIReader {
             }
             mathExpression.setDoubles(doubles);
         } else {
-            return null;
+            throw new IllegalArgumentException("Unable to read math expression");
         }
 
         return mathExpression;
@@ -301,6 +357,9 @@ class XMLNonAPIReader {
                 break;
             }
             expressions.add(mathExpression);
+        }
+        if (expressions.isEmpty()) {
+            throw new IllegalArgumentException("Unable to read math expression");
         }
         return expressions;
     }

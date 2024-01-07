@@ -22,37 +22,47 @@ public class XMLWriter {
     private Document document;
     private Element root;
 
-    public XMLWriter(String filename) throws ParserConfigurationException {
+    public XMLWriter(String filename) throws IOException {
         File_ = new File(filename);
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+        DocumentBuilder documentBuilder = null;
+        try {
+            documentBuilder = documentFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException exception) {
+            throw new RuntimeException(exception);
+        }
         document = documentBuilder.newDocument();
         root = document.createElement("Content");
         document.appendChild(root);
     }
-    public void CloseXMLWriter() throws TransformerException {
+    public void CloseXMLWriter() {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = null;
+        try {
+            transformer = transformerFactory.newTransformer();
 
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 
-        DOMSource domSource = new DOMSource(document);
-        StreamResult streamResult = new StreamResult(File_);
-        transformer.transform(domSource, streamResult);
+            DOMSource domSource = new DOMSource(document);
+            StreamResult streamResult = new StreamResult(File_);
+            transformer.transform(domSource, streamResult);
+        } catch (TransformerException e) {
+            throw new RuntimeException(e);
+        }
     }
-    public void WriteString(String data) throws ParserConfigurationException, TransformerException {
+    public void WriteString(String data) {
         Element main = document.createElement("Data");
         main.appendChild(document.createTextNode(data));
         root.appendChild(main);
     }
 
-    public void WriteInteger(int data) throws ParserConfigurationException, TransformerException {
+    public void WriteInteger(int data) {
         WriteString(String.valueOf(data));
     }
 
-    public void WriteMathExpression(MathExpression data) throws ParserConfigurationException, TransformerException, InvocationTargetException, IllegalAccessException {
+    public void WriteMathExpression(MathExpression data) {
         Element main = document.createElement("MathExpression");
         root.appendChild(main);
 
@@ -66,7 +76,7 @@ public class XMLWriter {
         }
         else {
             for (char var : data.getVariables()) {
-                variablesElement.appendChild(document.createTextNode("\"" + String.valueOf(var) + "\""));
+                variablesElement.appendChild(document.createTextNode("\"" + var + "\""));
             }
         }
         main.appendChild(variablesElement);
@@ -77,7 +87,7 @@ public class XMLWriter {
         }
         else {
             for (char var : data.getTypes()) {
-                typesElement.appendChild(document.createTextNode("\"" + String.valueOf(var) + "\""));
+                typesElement.appendChild(document.createTextNode("\"" + var + "\""));
             }
         }
         main.appendChild(typesElement);
@@ -88,7 +98,7 @@ public class XMLWriter {
         }
         else {
             for (ImmutablePair<Integer, Integer> var : data.getIntegers()) {
-                integersElement.appendChild(document.createTextNode("\"" + String.valueOf(var) + "\""));
+                integersElement.appendChild(document.createTextNode("\"" + var + "\""));
             }
         }
         main.appendChild(integersElement);
@@ -99,12 +109,12 @@ public class XMLWriter {
         }
         else {
             for (ImmutablePair<Double, Integer> var : data.getDoubles()) {
-                doublesElement.appendChild(document.createTextNode("\"" + String.valueOf(var) + "\""));
+                doublesElement.appendChild(document.createTextNode("\"" + var + "\""));
             }
         }
         main.appendChild(doublesElement);
     }
-    public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws ParserConfigurationException, TransformerException, InvocationTargetException, IllegalAccessException {
+    public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) {
         for(MathExpression me : expressions)
         {
             WriteMathExpression(me);

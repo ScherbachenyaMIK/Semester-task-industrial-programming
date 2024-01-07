@@ -38,7 +38,7 @@ public class JsonReader {
             throw new FileNotFoundException(exception.getMessage());
         }
         catch (IOException | NullPointerException exception) {
-            throw new IllegalArgumentException("Cannot deserialize Integer");
+            throw new IllegalArgumentException("Cannot deserialize String");
         }
     }
     public int ReadInteger() throws IllegalArgumentException, FileNotFoundException {
@@ -142,6 +142,15 @@ class JsonNonAPIReader {
     }
     public String ReadString() throws IOException {
         String result = reader.ReadString();
+        if (result == null) {
+            throw new IllegalArgumentException("Cannot deserialize String");
+        }
+        result = result.replaceFirst("^\"", "")
+                .replaceFirst("\"$", "");
+        return result;
+    }
+    public String ReadTextString() throws IOException {
+        String result = reader.ReadString();
         if (result != null) {
             result = result.replaceFirst("^\"", "")
                     .replaceFirst("\"$", "");
@@ -150,7 +159,7 @@ class JsonNonAPIReader {
     }
     public int ReadInteger() throws IllegalArgumentException {
         try {
-            return Integer.parseInt(ReadString());
+            return Integer.parseInt(ReadTextString());
         }
         catch (IOException | NullPointerException exception) {
             throw new IllegalArgumentException("Cannot deserialize Integer");
@@ -160,7 +169,7 @@ class JsonNonAPIReader {
         try {
             StringBuilder data = new StringBuilder();
             String line;
-            while ((line = ReadString()) != null) {
+            while ((line = ReadTextString()) != null) {
                 data.append(line);
                 if (line.charAt(line.length() - 1) == ',') {
                     data.append("\n");
@@ -235,7 +244,7 @@ class JsonNonAPIReader {
             ArrayList<MathExpression> expressions = new ArrayList<>();
             StringBuilder data = new StringBuilder();
             String line;
-            while ((line = ReadString()) != null)
+            while ((line = ReadTextString()) != null)
             {
                 if (line.equals("}, {"))
                 {
