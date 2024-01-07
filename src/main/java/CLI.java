@@ -440,7 +440,6 @@ public class CLI {
                         if (writer_type == 'y') {
                             XMLNonAPIWriter xnaw = new XMLNonAPIWriter(filename);
                             xnaw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                            xnaw.CloseXMLNonAPIWriter();
                         } else if (writer_type == 'n') {
                             XMLWriter xw = new XMLWriter(filename);
                             xw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);

@@ -24,8 +24,12 @@ public class XMLWriter {
 
     public XMLWriter(String filename) throws IOException {
         File_ = new File(filename);
+        if (!File_.exists()) {
+            _FileWriter FW = new _FileWriter(filename);
+            FW.CloseFile();
+        }
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = null;
+        DocumentBuilder documentBuilder;
         try {
             documentBuilder = documentFactory.newDocumentBuilder();
         } catch (ParserConfigurationException exception) {
@@ -143,26 +147,34 @@ public class XMLWriter {
     }
 }
 
-//TODO сброс потока при каждой новой записи
 class XMLNonAPIWriter {
+    private String filename;
     private BufferedWriter writer;
 
-    XMLNonAPIWriter(String filename) throws IOException {
+    XMLNonAPIWriter(String filename_) throws IOException {
+        filename = filename_;
+    }
+    private void CloseXMLNonAPIWriter() throws IOException {
+        writer.write("</Content>\n");
+        writer.close();
+    }
+    private void OpenXMLNonAPIWriter() throws IOException {
         File File_ = new File(filename);
         writer = new BufferedWriter(new FileWriter(File_));
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<Content>\n");
     }
-    void CloseXMLNonAPIWriter() throws IOException {
-        writer.write("</Content>\n");
-        writer.close();
-    }
     public void WriteString(String str) throws IOException {
-        writer.write("<Data>" + str + "</Data>");
+        OpenXMLNonAPIWriter();
+        writer.write("  <Data>" + str + "</Data>\n");
+        CloseXMLNonAPIWriter();
     }
     public void WriteInteger(int i) throws IOException {
-        writer.write("<Data>" + i + "</Data>");
+        OpenXMLNonAPIWriter();
+        writer.write("  <Data>" + i + "</Data>\n");
+        CloseXMLNonAPIWriter();
     }
     public void WriteMathExpression(MathExpression expression) throws IOException {
+        OpenXMLNonAPIWriter();
         StringBuilder content = new StringBuilder();
         content.append("  <MathExpression>\n")
                 .append("    <expression>").append(expression.getExpression()).append("</expression>\n")
@@ -185,19 +197,45 @@ class XMLNonAPIWriter {
         content.append(str).append("</doubles>\n")
                 .append("  </MathExpression>\n");
         writer.write(content.toString());
+        CloseXMLNonAPIWriter();
     }
     public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
-        for(MathExpression me : expressions)
+        OpenXMLNonAPIWriter();
+        for(MathExpression expression : expressions)
         {
-            WriteMathExpression(me);
+            StringBuilder content = new StringBuilder();
+            content.append("  <MathExpression>\n")
+                    .append("    <expression>").append(expression.getExpression()).append("</expression>\n")
+                    .append("    <variables>");
+            String str = String.join("\"\"", expression.getVariables().toString().split(", "));
+            str = str.replaceAll("\\[", "\"");
+            str = str.replaceAll("]", "\"");
+            content.append(str).append("</variables>\n").append("    <types>");
+            str = String.join("\"\"", expression.getTypes().toString().split(", "));
+            str = str.replaceAll("\\[", "\"");
+            str = str.replaceAll("]", "\"");
+            content.append(str).append("</types>\n").append("    <integers>");
+            str = String.join("\"\"", expression.getIntegers().toString().split(", "));
+            str = str.replaceAll("\\[", "\"");
+            str = str.replaceAll("]", "\"");
+            content.append(str).append("</integers>\n").append("    <doubles>");
+            str = String.join("\"\"", expression.getDoubles().toString().split(", "));
+            str = str.replaceAll("\\[", "\"");
+            str = str.replaceAll("]", "\"");
+            content.append(str).append("</doubles>\n")
+                    .append("  </MathExpression>\n");
+            writer.write(content.toString());
         }
+        CloseXMLNonAPIWriter();
     }
     public void WriteResult(Result result) throws IOException {
+        OpenXMLNonAPIWriter();
         StringBuilder content = new StringBuilder();
         content.append("  <Result>\n")
                 .append("    <result>").append(result.getResult()).append("</result>\n")
                 .append("  </Result>\n");
         writer.write(content.toString());
+        CloseXMLNonAPIWriter();
     }
     public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
         ArrayList<Result> results = new ArrayList<>();
@@ -208,8 +246,14 @@ class XMLNonAPIWriter {
                 results.add(new Result('e'));
             }
         }
+        OpenXMLNonAPIWriter();
         for (Result result : results) {
-            WriteResult(result);
+            StringBuilder content = new StringBuilder();
+            content.append("  <Result>\n")
+                    .append("    <result>").append(result.getResult()).append("</result>\n")
+                    .append("  </Result>\n");
+            writer.write(content.toString());
         }
+        CloseXMLNonAPIWriter();
     }
 }
