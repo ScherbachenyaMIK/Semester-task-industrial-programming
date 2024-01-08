@@ -18,11 +18,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class XMLWriter {
+    private String filename;
     private File File_;
     private Document document;
     private Element root;
 
-    public XMLWriter(String filename) throws IOException {
+    public XMLWriter(String filename_) {
+        filename = filename_;
+    }
+    private void OpenXMLWriter() throws IOException {
         File_ = new File(filename);
         if (!File_.exists()) {
             _FileWriter FW = new _FileWriter(filename);
@@ -39,7 +43,7 @@ public class XMLWriter {
         root = document.createElement("Content");
         document.appendChild(root);
     }
-    public void CloseXMLWriter() {
+    private void CloseXMLWriter() {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = null;
         try {
@@ -56,17 +60,20 @@ public class XMLWriter {
             throw new RuntimeException(e);
         }
     }
-    public void WriteString(String data) {
+    public void WriteString(String data) throws IOException {
+        OpenXMLWriter();
         Element main = document.createElement("Data");
         main.appendChild(document.createTextNode(data));
         root.appendChild(main);
+        CloseXMLWriter();
     }
 
-    public void WriteInteger(int data) {
+    public void WriteInteger(int data) throws IOException {
         WriteString(String.valueOf(data));
     }
 
-    public void WriteMathExpression(MathExpression data) {
+    public void WriteMathExpression(MathExpression data) throws IOException {
+        OpenXMLWriter();
         Element main = document.createElement("MathExpression");
         root.appendChild(main);
 
@@ -117,22 +124,77 @@ public class XMLWriter {
             }
         }
         main.appendChild(doublesElement);
+        CloseXMLWriter();
     }
-    public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) {
-        for(MathExpression me : expressions)
+    public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
+        OpenXMLWriter();
+        for(MathExpression data : expressions)
         {
-            WriteMathExpression(me);
+            Element main = document.createElement("MathExpression");
+            root.appendChild(main);
+
+            Element expressionElement = document.createElement("expression");
+            expressionElement.appendChild(document.createTextNode(data.getExpression()));
+            main.appendChild(expressionElement);
+
+            Element variablesElement = document.createElement("variables");
+            if (data.getVariables().isEmpty()) {
+                variablesElement.appendChild(document.createTextNode("\"\""));
+            }
+            else {
+                for (char var : data.getVariables()) {
+                    variablesElement.appendChild(document.createTextNode("\"" + var + "\""));
+                }
+            }
+            main.appendChild(variablesElement);
+
+            Element typesElement = document.createElement("types");
+            if (data.getTypes().isEmpty()) {
+                typesElement.appendChild(document.createTextNode("\"\""));
+            }
+            else {
+                for (char var : data.getTypes()) {
+                    typesElement.appendChild(document.createTextNode("\"" + var + "\""));
+                }
+            }
+            main.appendChild(typesElement);
+
+            Element integersElement = document.createElement("integers");
+            if (data.getIntegers().isEmpty()) {
+                integersElement.appendChild(document.createTextNode("\"\""));
+            }
+            else {
+                for (ImmutablePair<Integer, Integer> var : data.getIntegers()) {
+                    integersElement.appendChild(document.createTextNode("\"" + var + "\""));
+                }
+            }
+            main.appendChild(integersElement);
+
+            Element doublesElement = document.createElement("doubles");
+            if (data.getDoubles().isEmpty()) {
+                doublesElement.appendChild(document.createTextNode("\"\""));
+            }
+            else {
+                for (ImmutablePair<Double, Integer> var : data.getDoubles()) {
+                    doublesElement.appendChild(document.createTextNode("\"" + var + "\""));
+                }
+            }
+            main.appendChild(doublesElement);
         }
+        CloseXMLWriter();
     }
-    public void WriteResult(Result result) {
+    public void WriteResult(Result result) throws IOException {
+        OpenXMLWriter();
         Element main = document.createElement("Result");
         root.appendChild(main);
 
         Element resultElement = document.createElement("result");
         resultElement.appendChild(document.createTextNode(result.getResult()));
         main.appendChild(resultElement);
+        CloseXMLWriter();
     }
-    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) {
+    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
+        OpenXMLWriter();
         ArrayList<Result> results = new ArrayList<>();
         for (MathExpression expression : expressions) {
             try {
@@ -142,8 +204,15 @@ public class XMLWriter {
             }
         }
         for (Result result : results) {
-            WriteResult(result);
+            Element main = document.createElement("Result");
+            root.appendChild(main);
+
+            Element resultElement = document.createElement("result");
+            resultElement.appendChild(document.createTextNode(result.getResult()));
+            main.appendChild(resultElement);
+            CloseXMLWriter();
         }
+        CloseXMLWriter();
     }
 }
 

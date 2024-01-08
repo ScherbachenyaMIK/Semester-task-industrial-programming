@@ -412,7 +412,6 @@ class XMLReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         String result = XR.ReadString();
         assertEquals(str, result);
@@ -443,7 +442,6 @@ class XMLReaderTest {
         int i = 113;
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteInteger(i);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         int result = XR.ReadInteger();
         assertEquals(i, result);
@@ -458,7 +456,6 @@ class XMLReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         try {
             int result = XR.ReadInteger();
@@ -485,7 +482,6 @@ class XMLReaderTest {
         MathExpression mathExpression = new MathExpression(expression, arrayList);
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteMathExpression(mathExpression);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         MathExpression result = XR.ReadMathExpression();
         assertEquals(mathExpression, result);
@@ -500,7 +496,6 @@ class XMLReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         try {
             MathExpression result = XR.ReadMathExpression();
@@ -539,7 +534,6 @@ class XMLReaderTest {
         mel.add(new MathExpression("x * y", al));
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteListOfMathExpressions(mel);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         ArrayList<MathExpression> result = XR.ReadListOfMathExpressions();
         assertEquals(mel, result);
@@ -554,7 +548,6 @@ class XMLReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         try {
             ArrayList<MathExpression> result = XR.ReadListOfMathExpressions();
@@ -577,7 +570,6 @@ class XMLNonAPIReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         String result = XR.ReadString();
         XR.CloseXMLNonAPIReader();
@@ -609,7 +601,6 @@ class XMLNonAPIReaderTest {
         int i = 113;
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteInteger(i);
-        XW.CloseXMLWriter();
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         int result = XR.ReadInteger();
         XR.CloseXMLNonAPIReader();
@@ -625,7 +616,6 @@ class XMLNonAPIReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         try {
             int result = XR.ReadInteger();
@@ -653,7 +643,6 @@ class XMLNonAPIReaderTest {
         MathExpression mathExpression = new MathExpression(expression, arrayList);
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteMathExpression(mathExpression);
-        XW.CloseXMLWriter();
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         MathExpression result = XR.ReadMathExpression();
         XR.CloseXMLNonAPIReader();
@@ -669,7 +658,6 @@ class XMLNonAPIReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         try {
             MathExpression result = XR.ReadMathExpression();
@@ -709,7 +697,6 @@ class XMLNonAPIReaderTest {
         mel.add(new MathExpression("x * y", al));
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteListOfMathExpressions(mel);
-        XW.CloseXMLWriter();
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         ArrayList<MathExpression> result = XR.ReadListOfMathExpressions();
         XR.CloseXMLNonAPIReader();
@@ -725,7 +712,6 @@ class XMLNonAPIReaderTest {
         String str = "Hello world!";
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteString(str);
-        XW.CloseXMLWriter();
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         try {
             ArrayList<MathExpression> result = XR.ReadListOfMathExpressions();
@@ -769,7 +755,6 @@ class XMLAPI_NonAPIMatchingTest {
         mel.add(new MathExpression("x * y", al));
         XMLWriter XW = new XMLWriter(inputPath);
         XW.WriteListOfMathExpressions(mel);
-        XW.CloseXMLWriter();
         XMLReader XR = new XMLReader(inputPath);
         XMLNonAPIReader XNAR = new XMLNonAPIReader(inputPath);
         ArrayList<MathExpression> result1 = XR.ReadListOfMathExpressions();

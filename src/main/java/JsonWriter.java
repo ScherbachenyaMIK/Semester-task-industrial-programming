@@ -36,7 +36,9 @@ public class JsonWriter {
     public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
         objectMapper.writeValue(File_, expressions);
     }
-
+    public void WriteResult(Result result) throws IOException {
+        objectMapper.writeValue(File_, result);
+    }
     public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
         ArrayList<Result> results = new ArrayList<>();
         for (MathExpression expression : expressions) {
@@ -50,25 +52,33 @@ public class JsonWriter {
     }
 }
 
-//TODO сброс потока при каждой новой записи
 class JsonNonAPIWriter {
+    private String filename;
     private BufferedWriter writer;
-    JsonNonAPIWriter(String filename) throws IOException {
+    JsonNonAPIWriter(String filename_) throws IOException {
+        filename = filename_;
+    }
+    private void OpenJsonNonAPIWriter() throws IOException {
         File File_ = new File(filename);
         writer = new BufferedWriter(new FileWriter(File_));
     }
-    void CloseJsonNonAPIWriter() throws IOException {
+    private void CloseJsonNonAPIWriter() throws IOException {
         writer.close();
     }
     public void WriteString(String str) throws IOException {
+        OpenJsonNonAPIWriter();
         writer.write("\"" + str + "\"");
+        CloseJsonNonAPIWriter();
     }
 
     public void WriteInteger(int i) throws IOException {
+        OpenJsonNonAPIWriter();
         writer.write(String.valueOf(i));
+        CloseJsonNonAPIWriter();
     }
 
     public void WriteMathExpression(MathExpression expression) throws IOException {
+        OpenJsonNonAPIWriter();
         String tab = "  ";
         StringBuilder content = new StringBuilder("{\n");
         content.append(tab).append("\"expression\" : \"").append(expression.getExpression()).append("\",\n");
@@ -115,17 +125,74 @@ class JsonNonAPIWriter {
         }
         content.append(" ]\n}");
         writer.write(content.toString());
+        CloseJsonNonAPIWriter();
     }
     public void WriteListOfMathExpressions(ArrayList<MathExpression> expressions) throws IOException {
+        OpenJsonNonAPIWriter();
+        String tab = "  ";
+        StringBuilder content = new StringBuilder();
         writer.write("[ ");
-        for(MathExpression me : expressions)
+        for(MathExpression expression : expressions)
         {
-            WriteMathExpression(me);
+            content.append("{\n");
+            content.append(tab).append("\"expression\" : \"").append(expression.getExpression()).append("\",\n");
+            content.append(tab).append("\"variables\" : [");
+            ArrayList<Character> variables = expression.getVariables();
+            for(Character c : variables)
+            {
+                content.append(" \"").append(c).append("\",");
+            }
+            if (!variables.isEmpty()) {
+                content.deleteCharAt(content.length() - 1);
+            }
+            content.append(" ],\n");
+            content.append(tab).append("\"types\" : [");
+            ArrayList<Character> types = expression.getTypes();
+            for(Character c : types)
+            {
+                content.append(" \"").append(c).append("\",");
+            }
+            if (!types.isEmpty()) {
+                content.deleteCharAt(content.length() - 1);
+            }
+            content.append(" ],\n");
+            content.append(tab).append("\"integers\" : [");
+            ArrayList<ImmutablePair<Integer, Integer>> integers = expression.getIntegers();
+            for(ImmutablePair<Integer, Integer> p : integers)
+            {
+                content.append(" {\n").append(tab).append(tab).append("\"").append(p.getLeft())
+                        .append("\" : ").append(p.getRight()).append("\n").append(tab).append("},");
+            }
+            if (!integers.isEmpty()) {
+                content.deleteCharAt(content.length() - 1);
+            }
+            content.append(" ],\n");
+            content.append(tab).append("\"doubles\" : [");
+            ArrayList<ImmutablePair<Double, Integer>> doubles = expression.getDoubles();
+            for(ImmutablePair<Double, Integer> p : doubles)
+            {
+                content.append(" {\n").append(tab).append(tab).append("\"").append(p.getLeft())
+                        .append("\" : ").append(p.getRight()).append("\n").append(tab).append("},");
+            }
+            if (!doubles.isEmpty()) {
+                content.deleteCharAt(content.length() - 1);
+            }
+            content.append(" ]\n}, ");
         }
+        writer.write(content.substring(0, content.length() - 2).toString());
         writer.write(" ]");
+        CloseJsonNonAPIWriter();
     }
-
+    public void WriteResult(Result result) throws IOException {
+        OpenJsonNonAPIWriter();
+        String tab = "  ";
+        StringBuilder content = new StringBuilder();
+        content.append("{\n").append(tab).append("\"result\" : \"").append(result.getResult()).append("\"\n}");
+        writer.write(content.toString());
+        CloseJsonNonAPIWriter();
+    }
     public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
+        OpenJsonNonAPIWriter();
         if (expressions.isEmpty()) {
             writer.write("[ ]");
             return;
@@ -146,5 +213,6 @@ class JsonNonAPIWriter {
         content.setLength(content.length() - 2);
         content.append(" ]");
         writer.write(content.toString());
+        CloseJsonNonAPIWriter();
     }
 }

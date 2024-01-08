@@ -201,7 +201,7 @@ public class CLI {
                         catch (IllegalArgumentException | FileNotFoundException exception) {
                             RefreshConsole();
                             System.out.println("> The .json file is damaged or does not match the format");
-                            System.out.println("> The file was not readed");
+                            System.out.println("> The file was not read");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
                             System.out.print("> ");
@@ -213,20 +213,32 @@ public class CLI {
                         System.out.println("> Do you want to use Non API Reader? (y/n)");
                         System.out.print("> ");
                         reader_type = scanner.next().charAt(0);
-                        if (reader_type == 'y') {
-                            XMLNonAPIReader xnar = new XMLNonAPIReader(filename);
-                            ReadedMEs = xnar.ReadListOfMathExpressions();
-                            xnar.CloseXMLNonAPIReader();
-                        } else if (reader_type == 'n') {
-                            XMLReader xr = new XMLReader(filename);
-                            ReadedMEs = xr.ReadListOfMathExpressions();
-                        } else {
-                            System.out.println("> Entered character incorrect");
-                            System.out.println("> As default API Reader has been chosen");
-                            XMLReader xr = new XMLReader(filename);
-                            ReadedMEs = xr.ReadListOfMathExpressions();
+                        try {
+                            if (reader_type == 'y') {
+                                XMLNonAPIReader xnar = new XMLNonAPIReader(filename);
+                                ReadedMEs = xnar.ReadListOfMathExpressions();
+                                xnar.CloseXMLNonAPIReader();
+                            } else if (reader_type == 'n') {
+                                XMLReader xr = new XMLReader(filename);
+                                ReadedMEs = xr.ReadListOfMathExpressions();
+                            } else {
+                                System.out.println("> Entered character incorrect");
+                                System.out.println("> As default API Reader has been chosen");
+                                XMLReader xr = new XMLReader(filename);
+                                ReadedMEs = xr.ReadListOfMathExpressions();
+                            }
+                            correct_input = true;
                         }
-                        correct_input = true;
+                        catch (IllegalArgumentException | FileNotFoundException exception) {
+                            RefreshConsole();
+                            System.out.println("> The .xml file is damaged or does not match the format");
+                            System.out.println("> The file was not read");
+                            System.out.println("> Try again");
+                            System.out.println("> Press \"Enter\"...");
+                            System.out.print("> ");
+                            System.in.read();
+                            RefreshConsole();
+                        }
                         break;
                     case 4:
                         dearchiversZip.add(new DearchiverZip(filename));
@@ -417,7 +429,6 @@ public class CLI {
                         if (writer_type == 'y') {
                             JsonNonAPIWriter jnaw = new JsonNonAPIWriter(filename);
                             jnaw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                            jnaw.CloseJsonNonAPIWriter();
                         } else if (writer_type == 'n') {
                             JsonWriter jw = new JsonWriter(filename);
                             jw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
@@ -443,13 +454,11 @@ public class CLI {
                         } else if (writer_type == 'n') {
                             XMLWriter xw = new XMLWriter(filename);
                             xw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                            xw.CloseXMLWriter();
                         } else {
                             System.out.println("> Entered character incorrect");
                             System.out.println("> As default API Reader have been chosen");
                             XMLWriter xw = new XMLWriter(filename);
                             xw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                            xw.CloseXMLWriter();
                         }
                         RefreshConsole();
                         System.out.println("> File successfully written");
