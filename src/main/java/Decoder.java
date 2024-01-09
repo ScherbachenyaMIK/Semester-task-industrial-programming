@@ -25,7 +25,9 @@ public class Decoder {
         inputStream.close();
         outputStream.close();
         File file = new File(OutputPath);
-        file.delete();
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     public void decryptFile(String key) throws IOException, InvalidAlgorithmParameterException, InvalidKeyException {

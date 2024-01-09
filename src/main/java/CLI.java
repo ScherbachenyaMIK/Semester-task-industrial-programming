@@ -522,6 +522,7 @@ public class CLI {
                                 throw new InvalidKeyException("Invalid key");
                             }
                             enc.encryptFile(key);
+                            enc.CloseEncoder();
                             RefreshConsole();
                             System.out.println("> File successfully encoded");
                             System.out.println("> Result in file " + filename);
