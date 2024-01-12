@@ -41,6 +41,9 @@ public class DearchiverZip {
                 fw.CloseFile();
             }
         }
+        if (files.size() == 1) {
+            throw new IOException("Error while working with .zip archive");
+        }
         return files;
     }
 }

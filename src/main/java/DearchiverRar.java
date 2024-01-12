@@ -14,9 +14,15 @@ public class DearchiverRar {
     public ArrayList<String> Dearchive() throws IOException, InterruptedException {
         ArrayList<String> files = new ArrayList<>();
         OutputFiles = filename.substring(0, filename.length() - 4) + "/";
-        ProcessBuilder processBuilder = new ProcessBuilder("./Rar.exe", "x", "-o+", filename, OutputFiles);
+        ProcessBuilder processBuilder = new ProcessBuilder("./UnRAR.exe", "x", "-o+", filename, OutputFiles);
         Process process = processBuilder.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new IOException();
+        }
+
         String line;
         String file;
         while ((line = reader.readLine()) != null) {
@@ -33,10 +39,6 @@ public class DearchiverRar {
                 file = file.replaceAll("\\\\", "/");
                 files.add(file);
             }
-        }
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            throw new IOException();
         }
         return files;
     }

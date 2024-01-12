@@ -52,7 +52,7 @@ Add Web functionality and combine everything together: UI and Web.
 - [x] Add an encoder
 - [x] Add a decoder
 - [ ] Add an automatical format checker
-- [ ] Cover all code with unit-tests (Coverage is 74%)
+- [X] Cover all code with unit-tests (Coverage is 88%)
 - [ ] Add a standardized exception handling
 - [ ] Add a design patterns
 - [x] Add a CLI

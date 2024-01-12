@@ -43,9 +43,11 @@ public class CLI {
                             } else if (continueC == 'n') {
                                 continueB = false;
                             } else {
+                                RefreshConsole();
                                 System.out.println("> Entered character incorrect");
                                 System.out.println("> Reading stopped");
                                 continueB = false;
+                                RefreshConsole();
                             }
                         }
                         break;
@@ -60,9 +62,11 @@ public class CLI {
                             } else if (continueC == 'n') {
                                 continueB = false;
                             } else {
+                                RefreshConsole();
                                 System.out.println("> Entered character incorrect");
                                 System.out.println("> Writing stopped");
                                 continueB = false;
+                                RefreshConsole();
                             }
                         }
                         break;

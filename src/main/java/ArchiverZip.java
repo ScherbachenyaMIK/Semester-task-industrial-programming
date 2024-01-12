@@ -16,8 +16,8 @@ public class ArchiverZip
     }
 
     public void CloseArchiverZip() throws IOException {
-        File_.close();
         ZipStream.close();
+        File_.close();
     }
 
     public static List<String> makeListOfFilesToArchive(String directoryPath) throws FileNotFoundException {
@@ -53,6 +53,10 @@ public class ArchiverZip
             throws IOException {
         for (String file : filesToArchive) {
             String filePath = file;
+            File file_check = new File(file);
+            if (!file_check.exists()) {
+                throw new FileNotFoundException("Error while working with .zip archive, file not exists");
+            }
             ArchiveEntry entry = new ZipArchiveEntry(file);
 
             ZipStream.putArchiveEntry(entry);
