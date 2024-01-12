@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileWriterTest {
+class TextWriterTest {
     private String outputPath = "TestOutput.txt";
 
     @Test
@@ -145,6 +145,32 @@ class FileWriterTest {
                 x = 6.0E-6
                 x = 6.0E-6
                 y = -100000.0
+                """, result.toString());
+        BFR.close();
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    @Test
+    void WriteResult() throws IOException {
+        File file = new File(outputPath);
+        if (file.exists()) {
+            file.delete();
+        }
+        _FileWriter FW = new _FileWriter(outputPath);
+        FW.WriteResult(new Result('e'));
+        FW.CloseFile();
+        BufferedReader BFR = new BufferedReader(new FileReader(outputPath));
+        StringBuilder result = new StringBuilder();
+        String line;
+        while ((line = BFR.readLine()) != null) {
+            result.append(line);
+            result.append("\n");
+        }
+        assertEquals("""
+                Task 1:
+                error!
                 """, result.toString());
         BFR.close();
         if (file.exists()) {

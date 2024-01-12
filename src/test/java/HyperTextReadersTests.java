@@ -173,7 +173,7 @@ class JsonNonAPIReaderTest {
         JW.WriteString(str);
         JsonNonAPIReader JR = new JsonNonAPIReader(inputPath);
         String result = JR.ReadTextString();
-        JR.CloseJsonNonAPIReader();
+        JR.CloseReader();
         assertEquals(str, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -204,7 +204,7 @@ class JsonNonAPIReaderTest {
         JW.WriteString(str);
         JsonNonAPIReader JR = new JsonNonAPIReader(inputPath);
         String result = JR.ReadString();
-        JR.CloseJsonNonAPIReader();
+        JR.CloseReader();
         assertEquals(str, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -222,7 +222,7 @@ class JsonNonAPIReaderTest {
             fail();
         }
         catch (IllegalArgumentException exception) {
-            JR.CloseJsonNonAPIReader();
+            JR.CloseReader();
             File input = new File(inputPath);
             if (input.exists()) {
                 input.delete();
@@ -237,7 +237,7 @@ class JsonNonAPIReaderTest {
         JW.WriteInteger(i);
         JsonNonAPIReader JR = new JsonNonAPIReader(inputPath);
         int result = JR.ReadInteger();
-        JR.CloseJsonNonAPIReader();
+        JR.CloseReader();
         assertEquals(i, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -256,7 +256,7 @@ class JsonNonAPIReaderTest {
             fail();
         }
         catch (IllegalArgumentException exception) {
-            JR.CloseJsonNonAPIReader();
+            JR.CloseReader();
             File input = new File(inputPath);
             if (input.exists()) {
                 input.delete();
@@ -279,7 +279,7 @@ class JsonNonAPIReaderTest {
         JW.WriteMathExpression(mathExpression);
         JsonNonAPIReader JR = new JsonNonAPIReader(inputPath);
         MathExpression result = JR.ReadMathExpression();
-        JR.CloseJsonNonAPIReader();
+        JR.CloseReader();
         assertEquals(mathExpression, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -298,7 +298,7 @@ class JsonNonAPIReaderTest {
             fail();
         }
         catch (IllegalArgumentException exception) {
-            JR.CloseJsonNonAPIReader();
+            JR.CloseReader();
             File input = new File(inputPath);
             if (input.exists()) {
                 input.delete();
@@ -333,7 +333,7 @@ class JsonNonAPIReaderTest {
         FW.WriteListOfMathExpressions(mel);
         JsonNonAPIReader JR = new JsonNonAPIReader(inputPath);
         ArrayList<MathExpression> result = JR.ReadListOfMathExpressions();
-        JR.CloseJsonNonAPIReader();
+        JR.CloseReader();
         assertEquals(mel, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -352,7 +352,7 @@ class JsonNonAPIReaderTest {
             fail();
         }
         catch (IllegalArgumentException exception) {
-            JR.CloseJsonNonAPIReader();
+            JR.CloseReader();
             File input = new File(inputPath);
             if (input.exists()) {
                 input.delete();
@@ -393,7 +393,7 @@ class JsonAPI_NonAPIMatchingTest {
         JsonNonAPIReader JNAR = new JsonNonAPIReader(inputPath);
         ArrayList<MathExpression> result1 = JR.ReadListOfMathExpressions();
         ArrayList<MathExpression> result2 = JNAR.ReadListOfMathExpressions();
-        JNAR.CloseJsonNonAPIReader();
+        JNAR.CloseReader();
         assertEquals(result1, result2);
         assertEquals(mel, result1);
         assertEquals(mel, result2);
@@ -572,7 +572,7 @@ class XMLNonAPIReaderTest {
         XW.WriteString(str);
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         String result = XR.ReadString();
-        XR.CloseXMLNonAPIReader();
+        XR.CloseReader();
         assertEquals(str, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -603,7 +603,7 @@ class XMLNonAPIReaderTest {
         XW.WriteInteger(i);
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         int result = XR.ReadInteger();
-        XR.CloseXMLNonAPIReader();
+        XR.CloseReader();
         assertEquals(i, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -622,7 +622,7 @@ class XMLNonAPIReaderTest {
             fail();
         }
         catch (IllegalArgumentException exception) {
-            XR.CloseXMLNonAPIReader();
+            XR.CloseReader();
             File input = new File(inputPath);
             if (input.exists()) {
                 input.delete();
@@ -645,7 +645,7 @@ class XMLNonAPIReaderTest {
         XW.WriteMathExpression(mathExpression);
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         MathExpression result = XR.ReadMathExpression();
-        XR.CloseXMLNonAPIReader();
+        XR.CloseReader();
         assertEquals(mathExpression, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -664,7 +664,7 @@ class XMLNonAPIReaderTest {
             fail();
         }
         catch (IllegalArgumentException exception) {
-            XR.CloseXMLNonAPIReader();
+            XR.CloseReader();
             File input = new File(inputPath);
             if (input.exists()) {
                 input.delete();
@@ -699,7 +699,7 @@ class XMLNonAPIReaderTest {
         XW.WriteListOfMathExpressions(mel);
         XMLNonAPIReader XR = new XMLNonAPIReader(inputPath);
         ArrayList<MathExpression> result = XR.ReadListOfMathExpressions();
-        XR.CloseXMLNonAPIReader();
+        XR.CloseReader();
         assertEquals(mel, result);
         File input = new File(inputPath);
         if (input.exists()) {
@@ -718,7 +718,7 @@ class XMLNonAPIReaderTest {
             fail();
         }
         catch (IllegalArgumentException exception) {
-            XR.CloseXMLNonAPIReader();
+            XR.CloseReader();
             File input = new File(inputPath);
             if (input.exists()) {
                 input.delete();
@@ -759,7 +759,7 @@ class XMLAPI_NonAPIMatchingTest {
         XMLNonAPIReader XNAR = new XMLNonAPIReader(inputPath);
         ArrayList<MathExpression> result1 = XR.ReadListOfMathExpressions();
         ArrayList<MathExpression> result2 = XNAR.ReadListOfMathExpressions();
-        XNAR.CloseXMLNonAPIReader();
+        XNAR.CloseReader();
         assertEquals(result1, result2);
         assertEquals(mel, result1);
         assertEquals(mel, result2);

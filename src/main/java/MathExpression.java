@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.udojava.evalex.Expression;
 
+// Class representing a mathematical expression with additional information
 @Setter
 @Getter
 public class MathExpression {
@@ -26,26 +27,35 @@ public class MathExpression {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     static Pattern regex_int = Pattern.compile(" -?\\d+$");
+
+    // Default constructor
     MathExpression() {
         expression = "";
     }
+
+    // Constructor with expression and variable information
     MathExpression(String expression_, ArrayList<String> variables_) throws IllegalArgumentException {
+        // Validate input
         if (expression_ == null) {
             throw new IllegalArgumentException("Expression is null");
         }
+
         expression = expression_;
-        for(String i : variables_)
-        {
+
+        // Process each variable in the expression
+        for (String i : variables_) {
+            // Extract the variable character
             variables.add(i.charAt(0));
+
+            // Check if the variable represents an integer
             Matcher matcher = regex_int.matcher(i);
-            if(matcher.find())
-            {
+            if (matcher.find()) {
                 types.add('i');
                 ImmutablePair<Integer, Integer> pair = new ImmutablePair<>(Integer.parseInt(i.substring(matcher.start() + 1)),
                         variables.size() - 1);
                 integers.add(pair);
-            }
-            else {
+            } else {
+                // Check if the variable represents a double
                 matcher = regex_double.matcher(i);
                 if (matcher.find()) {
                     types.add('d');
@@ -53,33 +63,34 @@ public class MathExpression {
                             variables.size() - 1);
                     doubles.add(pair);
                 } else {
-                    throw new IllegalArgumentException("Variables does not match the format");
+                    throw new IllegalArgumentException("Variables do not match the format");
                 }
             }
         }
     }
-    String replaceVariablesWithNumbers()
-    {
+
+    // Replace variables with their corresponding numeric values
+    String replaceVariablesWithNumbers() {
         String new_expression = expression;
-        for (int i = 0; i < variables.size(); ++i)
-        {
+
+        // Replace each variable with its numeric value
+        for (int i = 0; i < variables.size(); ++i) {
             char var = variables.get(i);
-            if (types.get(i) == 'i')
-            {
+            if (types.get(i) == 'i') {
                 int j;
-                for(j = 0; integers.get(j).getRight() != i; ++j);
+                for (j = 0; integers.get(j).getRight() != i; ++j) ;
                 int value = integers.get(j).getLeft();
                 new_expression = new_expression.replaceAll(String.valueOf(var), String.valueOf(value));
-            }
-            else
-            {
+            } else {
                 int j;
-                for(j = 0; doubles.get(j).getRight() != i; ++j);
+                for (j = 0; doubles.get(j).getRight() != i; ++j) ;
                 double value = doubles.get(j).getLeft();
                 new_expression = new_expression.replaceAll(String.valueOf(var), String.valueOf(value));
             }
         }
-        new_expression = new_expression.replaceAll("[dD]","");
+
+        // Remove 'd' or 'D' after numbers, fix spacing issues
+        new_expression = new_expression.replaceAll("[dD]", "");
         new_expression = new_expression.replaceAll("\\+ -", "- ");
         new_expression = new_expression.replaceAll("- -", "+ ");
         new_expression = new_expression.replaceAll("\\* (-\\d+\\.?\\d*[Dd]?|-\\d*\\.\\d+[Dd]?|[1-9][eE]-?[1-9]\\d*[dD]?)", "\\* \\($1\\) ");
@@ -88,6 +99,8 @@ public class MathExpression {
         new_expression = "(" + new_expression.trim() + ")";
         return new_expression;
     }
+
+    // Calculate the result of the expression based on the specified calculator type
     public String Result(int type) throws IOException {
         switch (type) {
             case 1:
@@ -99,10 +112,12 @@ public class MathExpression {
         }
         throw new IllegalArgumentException("Invalid argument");
     }
+
+    // Override toString to provide a string representation of the MathExpression
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("expression : " + expression + "\nvariables:\n");
-        for(int i = 0; i < variables.size(); ++i) {
+        for (int i = 0; i < variables.size(); ++i) {
             result.append(variables.get(i) + " (" +
                     types.get(i) + ") = ");
             if (types.get(i) == 'i') {
@@ -119,28 +134,32 @@ public class MathExpression {
         }
         return result.toString();
     }
+
+    // Override equals to compare MathExpression objects
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof MathExpression)) {
             return false;
         }
-
         return this.toString().equals(obj.toString());
     }
-    private static class RegexCalculator
-    {
+
+    // Inner class for performing calculations using regular expressions
+    private static class RegexCalculator {
         static Pattern brackets_regex = Pattern.compile("\\(([^(]*?)\\)");
         static Pattern negative_number_regex = Pattern.compile("-[^ -+*/]+");
         static Pattern multiplication_regex = Pattern.compile("( |^)(-?[^- +/*]+|-?[^- +/*]+E-?[^- +/*]+) \\* (.+?)( |$)");
         static Pattern division_regex = Pattern.compile("( |^)(-?[^- +/*]+|-?[^- +/*]+E-?[^- +/*]+) / (.+?)( |$)");
         static Pattern summation_regex = Pattern.compile("( |^)(-?[^- +/*]+|-?[^- +/*]+E-?[^- +/*]+) \\+ (.+?)( |$)");
         static Pattern subtraction_regex = Pattern.compile("( |^)(-?[^- +/*]+|-?[^- +/*]+E-?[^- +/*]+) - (.+?)( |$)");
+
         @Getter
         String result;
+
+        // Constructor to perform calculations using regular expressions
         RegexCalculator(String expression) throws IOException {
             Matcher brackets_matcher = brackets_regex.matcher(expression);
-            while (brackets_matcher.find())
-            {
+            while (brackets_matcher.find()) {
                 String brackets = brackets_matcher.group(1);
                 if (brackets.matches("-?(\\d+\\.\\d*[dD]?$|\\.\\d+[dD]?$|[1-9]\\.?\\d*?[eE]-?[1-9]\\d*[dD]?$)") ||
                         brackets.matches("-?\\d+$")) {
@@ -161,13 +180,14 @@ public class MathExpression {
                 brackets_matcher = brackets_regex.matcher(expression);
             }
             if (expression.matches("^ ?-?(\\d+\\.\\d*[dD]?|\\.\\d+[dD]?|[1-9]\\.?\\d*?[eE]-?[1-9]\\d*[dD]?) ?$")
-                || expression.matches("^ ?-?\\d+ ?$")) {
+                    || expression.matches("^ ?-?\\d+ ?$")) {
                 result = expression;
-            }
-            else {
-                throw new IOException ("Incorrect expression");
+            } else {
+                throw new IOException("Incorrect expression");
             }
         }
+
+        // Helper method to perform multiplication in a string expression
         private static String Multiplication(String brackets) {
             Matcher multiplication_matcher = multiplication_regex.matcher(brackets);
             while (multiplication_matcher.find()) {
@@ -178,19 +198,23 @@ public class MathExpression {
             }
             return brackets;
         }
+
+        // Helper method to perform division in a string expression
         private static String Division(String brackets) throws IOException {
             Matcher division_matcher = division_regex.matcher(brackets);
             while (division_matcher.find()) {
                 Double left_operand = Double.parseDouble(division_matcher.group(2));
                 Double right_operand = Double.parseDouble(division_matcher.group(3));
                 if (Math.abs(right_operand) < 1e-15) {
-                    throw new IOException ("Division by zero");
+                    throw new IOException("Division by zero");
                 }
                 brackets = division_matcher.replaceFirst(" " + Double.valueOf(left_operand / right_operand).toString() + " ");
                 division_matcher = division_regex.matcher(brackets);
             }
             return brackets;
         }
+
+        // Helper method to perform summation in a string expression
         private static String Summation(String brackets) {
             Matcher summation_matcher = summation_regex.matcher(brackets);
             while (summation_matcher.find()) {
@@ -201,6 +225,8 @@ public class MathExpression {
             }
             return brackets;
         }
+
+        // Helper method to perform subtraction in a string expression
         private static String Subtraction(String brackets) {
             Matcher subtraction_matcher = subtraction_regex.matcher(brackets);
             while (subtraction_matcher.find()) {
@@ -212,14 +238,18 @@ public class MathExpression {
             return brackets;
         }
     }
-    private static class ReversivePolishNotationCalculator
-    {
+    // Inner class for performing calculations using Reverse Polish Notation
+    private static class ReversivePolishNotationCalculator {
         @Getter
         private String result;
+
+        // Constructor to perform calculations using Reverse Polish Notation
         ReversivePolishNotationCalculator(String expression) {
             expression = toRPN(expression);
             result = Double.toString(calculateRPN(expression));
         }
+
+        // Convert infix expression to Reverse Polish Notation
         private static String toRPN(String expression) {
             StringBuilder result = new StringBuilder();
             Deque<Character> stack = new ArrayDeque<>();
@@ -263,16 +293,17 @@ public class MathExpression {
                 if (stack.peek() == '(') {
                     throw new IllegalArgumentException("Invalid expression - mismatched parentheses");
                 }
-                result.append(stack.pop()).append(" ");
             }
 
             return result.toString().trim();
         }
 
+        // Check if a character is an operator
         private static boolean isOperator(char c) {
             return c == '+' || c == '-' || c == '*' || c == '/';
         }
 
+        // Return the precedence of an operator
         private static int precedence(char operator) {
             if (operator == '+' || operator == '-') {
                 return 1;
@@ -282,6 +313,7 @@ public class MathExpression {
             return 0;
         }
 
+        // Calculate the result of an expression in Reverse Polish Notation
         public static double calculateRPN(String rpnExpression) {
             Deque<Double> stack = new ArrayDeque<>();
             String[] tokens = rpnExpression.split("\\s+");
@@ -311,6 +343,7 @@ public class MathExpression {
             return stack.pop();
         }
 
+        // Check if a string is numeric
         private static boolean isNumeric(String str) {
             try {
                 Double.parseDouble(str);
@@ -320,6 +353,7 @@ public class MathExpression {
             }
         }
 
+        // Perform arithmetic operations
         private static double performOperation(char operator, double operand1, double operand2) {
             switch (operator) {
                 case '+':
@@ -338,10 +372,13 @@ public class MathExpression {
             }
         }
     }
-    private static class APICalculator
-    {
+
+    // Inner class for performing calculations using an external API
+    private static class APICalculator {
         @Getter
         private String result;
+
+        // Constructor to perform calculations using an external API
         APICalculator(String expression) {
             Expression expr = new Expression(expression);
             result = expr.eval().toString();
@@ -349,15 +386,22 @@ public class MathExpression {
     }
 }
 
+// Class representing the result of a calculation
 class Result {
     @Getter
     private String result;
+
+    // Default constructor
     Result() {
         result = "";
     }
+
+    // Constructor with an error character
     Result(char e) {
         result = "error!";
     }
+
+    // Constructor with a valid result string
     Result(String result_) {
         result = result_;
     }

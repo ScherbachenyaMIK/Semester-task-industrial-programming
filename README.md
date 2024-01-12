@@ -4,6 +4,7 @@
 - [Problem statement](#Problem-statement)
 - [List of subtasks](#List-of-subtasks)
 - [Brief description of the solution](#Brief-description-of-the-solution)
+- [Few words about structure](#Few-words-about-structure)
 
 ---
 
@@ -29,11 +30,11 @@ Add Web functionality and combine everything together: UI and Web.
 ---
 
 ## List of subtasks
-- [x] Add a MathExpression class to store readed data
+- [x] Add a MathExpression class to store read data
 - [x] Add a Result class to store results
 - [x] Add a regex calculator
 - [x] Add a reverse polish notation calculator
-- [x] Add an API callculator
+- [x] Add an API calculator
 - [x] Add a text writer
 - [x] Add a text Reader
 - [x] Add a text Buffered Reader
@@ -41,8 +42,8 @@ Add Web functionality and combine everything together: UI and Web.
 - [x] Add a json non API writer
 - [x] Add a json API Reader
 - [x] Add a json non API Reader
-- [x] Add a XML API writer
-- [x] Add a XML non API writer
+- [x] Add an XML API writer
+- [x] Add an XML non API writer
 - [x] Add a XML API Reader
 - [x] Add a XML non API Reader
 - [x] Add a zip dearchiver
@@ -51,15 +52,15 @@ Add Web functionality and combine everything together: UI and Web.
 - [x] Add a rar archiver
 - [x] Add an encoder
 - [x] Add a decoder
-- [ ] Add an automatical format checker
+- [ ] Add an automatic format checker
 - [X] Cover all code with unit-tests (Coverage is 88%)
-- [ ] Add a standardized exception handling
+- [X] Add a standardized exception handling
 - [ ] Add a design patterns
 - [x] Add a CLI
 - [ ] Add a GUI
-- [ ] Combine together GUI and CLI
+- [ ] Combine GUI and CLI
 - [ ] Add a Web
-- [ ] Combine together UI and Web
+- [ ] Combine UI and Web
 
 ---
 
@@ -69,3 +70,10 @@ The solution offers cyclic reading of multiple files, their dearchiving and deco
 Upon successfully reading a file, its content will be displayed to the user for review. After reading, the user will be prompted to choose the calculation method, make a record to a file, as well as cyclic archiving and encoding. Upon successful recording, the contents of the reading buffer will be cleared.
 
 It is possible to freely switch between reading/writing modes and create various sets of data and results.
+
+---
+
+## Few words about structure
+All readers form this inheritance structure (And Writers have a similar structure):
+
+![Local Image](images/scheme.png)

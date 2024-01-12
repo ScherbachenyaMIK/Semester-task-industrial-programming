@@ -1,7 +1,3 @@
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -12,11 +8,18 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLI {
+    // Scanner to read System.in
     private Scanner scanner = new Scanner(System.in);
+    // ArrayList to store dearchivers to safe temp files
     private ArrayList<DearchiverZip> dearchiversZip = new ArrayList<>();
+    // ArrayList to store dearchivers to safe temp files
     private ArrayList<DearchiverRar> dearchiversRar = new ArrayList<>();
+    // ArrayList to store decoders to safe temp files
     private ArrayList<Decoder> decoders = new ArrayList<>();
+    // ArrayList to store readed math expressions
     private ArrayList<MathExpression> mathExpressions = new ArrayList<>();
+
+    // Method to start the command-line interface
     public void StartCLI() throws IOException, InterruptedException {
         System.out.println("> Program run");
         Thread.sleep(1000);
@@ -97,22 +100,9 @@ public class CLI {
             }
         }
 
-        for (var i : dearchiversZip)
-        {
-            i.CloseDearchiverZip();
-        }
-        for (var i : dearchiversRar)
-        {
-            i.CloseDearchiverRar();
-        }
-        for (var i : decoders)
-        {
-            i.closeDecoder();
-        }
-        System.out.println("> Program successfully completed");
-        System.out.println("> All temps cleared");
-        System.out.println("> Exiting...");
+        CloseResources();
     }
+    // Method to handle reading operations
     private void Reading() throws IOException {
         ArrayList<MathExpression> ReadedMEs = new ArrayList<>();
         ArrayList<String> dearchived_files;
@@ -190,7 +180,7 @@ public class CLI {
                             if (reader_type == 'y') {
                                 JsonNonAPIReader jnar = new JsonNonAPIReader(filename);
                                 ReadedMEs = jnar.ReadListOfMathExpressions();
-                                jnar.CloseJsonNonAPIReader();
+                                jnar.CloseReader();
                             } else if (reader_type == 'n') {
                                 JsonReader jr = new JsonReader(filename);
                                 ReadedMEs = jr.ReadListOfMathExpressions();
@@ -221,7 +211,7 @@ public class CLI {
                             if (reader_type == 'y') {
                                 XMLNonAPIReader xnar = new XMLNonAPIReader(filename);
                                 ReadedMEs = xnar.ReadListOfMathExpressions();
-                                xnar.CloseXMLNonAPIReader();
+                                xnar.CloseReader();
                             } else if (reader_type == 'n') {
                                 XMLReader xr = new XMLReader(filename);
                                 ReadedMEs = xr.ReadListOfMathExpressions();
@@ -264,7 +254,7 @@ public class CLI {
                         break;
                     case 5:
                         dearchiversRar.add(new DearchiverRar(filename));
-                        dearchived_files = dearchiversRar.get(dearchiversRar.size() - 1).Dearchive();   //TODO Resolve this catch
+                        dearchived_files = dearchiversRar.get(dearchiversRar.size() - 1).Dearchive();
                         RefreshConsole();
                         System.out.println("> File has been dearchived");
                         System.out.println("> file(s) collected in folder:");
@@ -329,7 +319,7 @@ public class CLI {
                 scanner.next();
                 RefreshConsole();
             }
-            catch (IOException exception)
+            catch (IOException | InterruptedException exception)
             {
                 RefreshConsole();
                 System.out.println("> Error while working with file!");
@@ -347,8 +337,6 @@ public class CLI {
                 System.out.print("> ");
                 System.in.read();
                 RefreshConsole();
-            } catch (InterruptedException e) {  //TODO Resolve this catch
-                throw new RuntimeException(e);
             }
         }
 
@@ -367,6 +355,7 @@ public class CLI {
             mathExpressions.addAll(ReadedMEs);
         }
     }
+    // Method to handle writing operations
     private void Writing() throws IOException {
         boolean correct_input = false;
         while (!correct_input) {
@@ -586,6 +575,22 @@ public class CLI {
             }
         }
     }
+    // Method to close resources and display exit message
+    private void CloseResources() throws IOException {
+        for (var i : dearchiversZip) {
+            i.CloseDearchiverZip();
+        }
+        for (var i : dearchiversRar) {
+            i.CloseDearchiverRar();
+        }
+        for (var i : decoders) {
+            i.closeDecoder();
+        }
+        System.out.println("> Program successfully completed");
+        System.out.println("> All temps cleared");
+        System.out.println("> Exiting...");
+    }
+    // Method to refresh the console by printing new lines
     private static void RefreshConsole() {
         for (int i = 0; i < 30; ++i) {
             System.out.print("\n");
