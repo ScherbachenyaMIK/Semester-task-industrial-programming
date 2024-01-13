@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -9,504 +11,465 @@ import java.util.Scanner;
 
 public class CLI {
     // Scanner to read System.in
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
     // ArrayList to store dearchivers to safe temp files
-    private ArrayList<DearchiverZip> dearchiversZip = new ArrayList<>();
+    private final ArrayList<DearchiverZip> dearchiversZip = new ArrayList<>();
     // ArrayList to store dearchivers to safe temp files
-    private ArrayList<DearchiverRar> dearchiversRar = new ArrayList<>();
+    private final ArrayList<DearchiverRar> dearchiversRar = new ArrayList<>();
     // ArrayList to store decoders to safe temp files
-    private ArrayList<Decoder> decoders = new ArrayList<>();
+    private final ArrayList<Decoder> decoders = new ArrayList<>();
     // ArrayList to store readed math expressions
-    private ArrayList<MathExpression> mathExpressions = new ArrayList<>();
+    private final ArrayList<MathExpression> mathExpressions = new ArrayList<>();
 
     // Method to start the command-line interface
-    public void StartCLI() throws IOException, InterruptedException {
+    public void startCLI() throws IOException, InterruptedException {
         System.out.println("> Program run");
         Thread.sleep(1000);
         boolean quit = false;
         while (!quit) {
             try {
-                boolean continueB = true;
-                System.out.println("> Choose action");
-                System.out.println("> 1) Reading");
-                System.out.println("> 2) Writing");
-                System.out.println("> 3) Stop");
-                System.out.print("> ");
-                int type = scanner.nextInt();
-                char continueC;
+                int type = getUserChoice("Choose action\n1) Reading\n2) Writing\n3) Write read contents\n4) Stop", 4);
                 switch (type) {
                     case 1:
-                        while (continueB) {
-                            Reading();
-                            System.out.println("> Do you want to continue reading? (y/n)");
-                            System.out.print("> ");
-                            continueC = scanner.next().charAt(0);
-                            if (continueC == 'y') {
-                                continueB = true;
-                            } else if (continueC == 'n') {
-                                continueB = false;
-                            } else {
-                                RefreshConsole();
-                                System.out.println("> Entered character incorrect");
-                                System.out.println("> Reading stopped");
-                                continueB = false;
-                                RefreshConsole();
-                            }
-                        }
+                        handleReading();
                         break;
                     case 2:
-                        while (continueB) {
-                            Writing();
-                            System.out.println("> Do you want to continue writing? (y/n)");
-                            System.out.print("> ");
-                            continueC = scanner.next().charAt(0);
-                            if (continueC == 'y') {
-                                continueB = true;
-                            } else if (continueC == 'n') {
-                                continueB = false;
-                            } else {
-                                RefreshConsole();
-                                System.out.println("> Entered character incorrect");
-                                System.out.println("> Writing stopped");
-                                continueB = false;
-                                RefreshConsole();
-                            }
-                        }
+                        handleWriting();
                         break;
                     case 3:
-                        RefreshConsole();
+                        WriteContents();
+                        break;
+                    case 4:
+                        refreshConsole();
                         quit = true;
                         break;
                     default:
-                        RefreshConsole();
+                        refreshConsole();
                         System.out.println("> Incorrect input!");
                         System.out.println("> Try again");
                         System.out.println("> Press \"Enter\"...");
-                        System.out.print("> ");
                         System.in.read();
-                        RefreshConsole();
+                        refreshConsole();
                 }
-            }
-            catch (InputMismatchException exception)
-            {
-                RefreshConsole();
-                System.out.println("> Incorrect input!");
-                System.out.println("> Try again");
-                System.out.println("> Press \"Enter\"...");
-                System.out.print("> ");
-                System.in.read();
-                scanner.next();
-                RefreshConsole();
+            } catch (InputMismatchException exception) {
+                handleInputMismatchException();
             }
         }
-
-        CloseResources();
+        closeResources();
     }
+
     // Method to handle reading operations
-    private void Reading() throws IOException {
-        ArrayList<MathExpression> ReadedMEs = new ArrayList<>();
-        ArrayList<String> dearchived_files;
-        boolean correct_input = false;
+    private void handleReading() throws IOException {
+        ArrayList<MathExpression> readExpressions = new ArrayList<>();
+        ArrayList<String> dearchivedFiles;
+        boolean correctInput = false;
         boolean exit = false;
-        RefreshConsole();
-        while (!correct_input) {
+
+        refreshConsole();
+        while (!correctInput) {
             try {
-                System.out.println("> Choose input file type:");
-                System.out.println("> 1) .txt");
-                System.out.println("> 2) .json");
-                System.out.println("> 3) .xml");
-                System.out.println("> 4) .zip");
-                System.out.println("> 5) .rar");
-                System.out.println("> 6) Encoded file");
-                System.out.println("> 7) Exit");
-                System.out.print("> ");
-                int file_type = scanner.nextInt();
-                char reader_type;
+                // Choose the input file type
+                int fileType = getUserChoice(
+                        "Choose input file type:\n1) .txt\n2) .json\n3) .xml\n4) .zip\n5) .rar\n6) Encoded file\n7) File checker" +
+                                "\n8) Exit",8);
+                char readerType;
                 String filename = "";
-                if (file_type < 7 && file_type > 0) {
+                if (fileType < 8 && fileType > 0) {
+                    // Get the input filename
                     System.out.println("> Enter filename:");
                     System.out.print("> ");
                     filename = scanner.next();
                     if (filename.endsWith("/")) {
-                        RefreshConsole();
-                        System.out.println("> Invalid filename have been entered");
+                        refreshConsole();
+                        System.out.println("> Invalid filename entered");
                         System.out.println("> The file can't be read");
                         System.out.println("> Try again");
                         System.out.println("> Press \"Enter\"...");
-                        System.out.print("> ");
                         System.in.read();
                         throw new IOException();
                     }
                 }
-                switch (file_type) {
+                switch (fileType) {
+                    // Cases for different input file types
                     case 1:
+                        // Text file
                         System.out.println("> Do you want to use Buffered Reader? (y/n)");
                         System.out.print("> ");
-                        reader_type = scanner.next().charAt(0);
+                        readerType = scanner.next().charAt(0);
                         try {
-                            if (reader_type == 'y') {
+                            if (readerType == 'y') {
                                 _BufferedFileReader bfr = new _BufferedFileReader(new _FileReader(filename));
-                                ReadedMEs = bfr.ReadListOfMathExpressions();
+                                readExpressions = bfr.ReadListOfMathExpressions();
                                 bfr.CloseFile();
-                            } else if (reader_type == 'n') {
+                            } else if (readerType == 'n') {
                                 _FileReader fr = new _FileReader(filename);
-                                ReadedMEs = fr.ReadListOfMathExpressions();
+                                readExpressions = fr.ReadListOfMathExpressions();
                                 fr.CloseFile();
                             } else {
                                 System.out.println("> Entered character incorrect");
-                                System.out.println("> As default Reader without buffer has been chosen");
+                                System.out.println("> Defaulting to Reader without buffer");
                                 _FileReader fr = new _FileReader(filename);
-                                ReadedMEs = fr.ReadListOfMathExpressions();
+                                readExpressions = fr.ReadListOfMathExpressions();
                                 fr.CloseFile();
                             }
-                            correct_input = true;
-                        }
-                        catch (IllegalArgumentException exception) {
-                            RefreshConsole();
+                            correctInput = true;
+                        } catch (IllegalArgumentException exception) {
+                            refreshConsole();
                             System.out.println("> The text file is damaged or does not match the format");
-                            System.out.println("> The file was not readed");
+                            System.out.println("> The file was not read");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
                             System.in.read();
-                            RefreshConsole();
+                            refreshConsole();
                         }
                         break;
                     case 2:
+                        // JSON file
                         System.out.println("> Do you want to use Non API Reader? (y/n)");
                         System.out.print("> ");
-                        reader_type = scanner.next().charAt(0);
+                        readerType = scanner.next().charAt(0);
                         try {
-                            if (reader_type == 'y') {
+                            if (readerType == 'y') {
                                 JsonNonAPIReader jnar = new JsonNonAPIReader(filename);
-                                ReadedMEs = jnar.ReadListOfMathExpressions();
+                                readExpressions = jnar.ReadListOfMathExpressions();
                                 jnar.CloseReader();
-                            } else if (reader_type == 'n') {
+                            } else if (readerType == 'n') {
                                 JsonReader jr = new JsonReader(filename);
-                                ReadedMEs = jr.ReadListOfMathExpressions();
+                                readExpressions = jr.ReadListOfMathExpressions();
                             } else {
                                 System.out.println("> Entered character incorrect");
-                                System.out.println("> As default API Reader has been chosen");
+                                System.out.println("> Defaulting to API Reader");
                                 JsonReader jr = new JsonReader(filename);
-                                ReadedMEs = jr.ReadListOfMathExpressions();
+                                readExpressions = jr.ReadListOfMathExpressions();
                             }
-                            correct_input = true;
-                        }
-                        catch (IllegalArgumentException | FileNotFoundException exception) {
-                            RefreshConsole();
+                            correctInput = true;
+                        } catch (IllegalArgumentException | FileNotFoundException exception) {
+                            refreshConsole();
                             System.out.println("> The .json file is damaged or does not match the format");
                             System.out.println("> The file was not read");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
                             System.in.read();
-                            RefreshConsole();
+                            refreshConsole();
                         }
                         break;
                     case 3:
+                        // XML file
                         System.out.println("> Do you want to use Non API Reader? (y/n)");
                         System.out.print("> ");
-                        reader_type = scanner.next().charAt(0);
+                        readerType = scanner.next().charAt(0);
                         try {
-                            if (reader_type == 'y') {
+                            if (readerType == 'y') {
                                 XMLNonAPIReader xnar = new XMLNonAPIReader(filename);
-                                ReadedMEs = xnar.ReadListOfMathExpressions();
+                                readExpressions = xnar.ReadListOfMathExpressions();
                                 xnar.CloseReader();
-                            } else if (reader_type == 'n') {
+                            } else if (readerType == 'n') {
                                 XMLReader xr = new XMLReader(filename);
-                                ReadedMEs = xr.ReadListOfMathExpressions();
+                                readExpressions = xr.ReadListOfMathExpressions();
                             } else {
                                 System.out.println("> Entered character incorrect");
-                                System.out.println("> As default API Reader has been chosen");
+                                System.out.println("> Defaulting to API Reader");
                                 XMLReader xr = new XMLReader(filename);
-                                ReadedMEs = xr.ReadListOfMathExpressions();
+                                readExpressions = xr.ReadListOfMathExpressions();
                             }
-                            correct_input = true;
-                        }
-                        catch (IllegalArgumentException | FileNotFoundException exception) {
-                            RefreshConsole();
+                            correctInput = true;
+                        } catch (IllegalArgumentException | FileNotFoundException exception) {
+                            refreshConsole();
                             System.out.println("> The .xml file is damaged or does not match the format");
                             System.out.println("> The file was not read");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
                             System.in.read();
-                            RefreshConsole();
+                            refreshConsole();
                         }
                         break;
                     case 4:
-                        dearchiversZip.add(new DearchiverZip(filename));
-                        dearchived_files = dearchiversZip.get(dearchiversZip.size() - 1).Dearchive();
-                        RefreshConsole();
-                        System.out.println("> File has been dearchived");
-                        System.out.println("> file(s) collected in folder:");
-                        System.out.println("> " + filename.substring(0, filename.length() - 4) + "/");
-                        System.out.println("> Dearchived instances:");
-                        for (String s : dearchived_files) {
-                            System.out.println(s);
+                        // ZIP archive
+                        try {
+                            dearchiversZip.add(new DearchiverZip(filename));
+                            dearchivedFiles = dearchiversZip.get(dearchiversZip.size() - 1).Dearchive();
+                            refreshConsole();
+                            System.out.println("> File has been dearchived");
+                            System.out.println("> Files collected in folder: " + filename.substring(0, filename.length() - 4) + "/");
+                            System.out.println("> Dearchived instances:");
+                            for (String s : dearchivedFiles) {
+                                System.out.println(s);
+                            }
+                            System.out.println("> Press \"Enter\"...");
+                            System.in.read();
+                            refreshConsole();
+                            correctInput = true;
+                            exit = true;
+                        } catch (IOException exception) {
+                            refreshConsole();
+                            System.out.println("> Error while working with .zip archive");
+                            System.out.println("> Try again");
+                            System.out.println("> Press \"Enter\"...");
+                            System.in.read();
+                            refreshConsole();
                         }
-                        System.out.println("> Press \"Enter\"...");
-                        System.out.print("> ");
-                        System.in.read();
-                        RefreshConsole();
-                        correct_input = true;
-                        exit = true;
                         break;
                     case 5:
-                        dearchiversRar.add(new DearchiverRar(filename));
-                        dearchived_files = dearchiversRar.get(dearchiversRar.size() - 1).Dearchive();
-                        RefreshConsole();
-                        System.out.println("> File has been dearchived");
-                        System.out.println("> file(s) collected in folder:");
-                        System.out.println("> " + filename.substring(0, filename.length() - 4) + "/");
-                        System.out.println("> Dearchived instances:");
-                        for (String s : dearchived_files) {
-                            System.out.println(s);
+                        // RAR archive
+                        try {
+                            dearchiversRar.add(new DearchiverRar(filename));
+                            dearchivedFiles = dearchiversRar.get(dearchiversRar.size() - 1).Dearchive();
+                            refreshConsole();
+                            System.out.println("> File has been dearchived");
+                            System.out.println("> Files collected in folder: " + filename.substring(0, filename.length() - 4) + "/");
+                            System.out.println("> Dearchived instances:");
+                            for (String s : dearchivedFiles) {
+                                System.out.println(s);
+                            }
+                            System.out.println("> Press \"Enter\"...");
+                            System.in.read();
+                            refreshConsole();
+                            correctInput = true;
+                            exit = true;
+                        } catch (IOException | InterruptedException exception) {
+                            refreshConsole();
+                            System.out.println("> Error while working with .rar archive");
+                            System.out.println("> Try again");
+                            System.out.println("> Press \"Enter\"...");
+                            System.in.read();
+                            refreshConsole();
                         }
-                        System.out.println("> Press \"Enter\"...");
-                        System.out.print("> ");
-                        System.in.read();
-                        RefreshConsole();
-                        correct_input = true;
-                        exit = true;
                         break;
                     case 6:
+                        // Encoded file
                         decoders.add(new Decoder(filename, "decripted_" + filename));
-                        System.out.println("> Enter 16-digit encription key: ");
+                        System.out.println("> Enter 16-digit encryption key: ");
                         System.out.print("> ");
                         String key = scanner.next();
                         try {
                             decoders.get(decoders.size() - 1).decryptFile(key);
-                            RefreshConsole();
-                            System.out.println("> File has been decryped");
-                            System.out.println("> Name of decrypted file:");
-                            System.out.println("> decripted_" + filename);
-                            correct_input = true;
+                            refreshConsole();
+                            System.out.println("> File has been decrypted");
+                            System.out.println("> Name of decrypted file: decripted_" + filename);
+                            correctInput = true;
                             exit = true;
-                        } catch (IllegalArgumentException | InvalidKeyException | InvalidAlgorithmParameterException exception) {
-                            RefreshConsole();
-                            System.out.println("> Incorrect or invalid key have been entered");
-                            System.out.println("> The file was not decoded");
+                        } catch (IOException | InvalidAlgorithmParameterException | InvalidKeyException exception) {
+                            refreshConsole();
+                            System.out.println("> Incorrect or invalid key entered");
+                            System.out.println("> The file was not decrypted");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
                             System.in.read();
-                            RefreshConsole();
+                            refreshConsole();
                         }
                         break;
                     case 7:
-                        correct_input = true;
-                        exit = true;
+                        // Using of automatic file checker
+                        System.out.println("> Warning!");
+                        System.out.println("> Using of file checker may take a long time due to trying all possible options!");
+                        try {
+                            String fileFormat = FileChecker.CheckFormat(new FileInputStream(filename));
+                            switch (fileFormat) {
+                                case "ZIP":
+                                    System.out.println("> I think the file '" + filename + "' may have the '.zip' format");
+                                    System.out.println("> Try to use `ZipDearchiver` for reading");
+                                    System.out.println("> Press \"Enter\"...");
+                                    System.in.read();
+                                    refreshConsole();
+                                    break;
+                                case "RAR":
+                                    System.out.println("> I think the file '" + filename + "' may have the '.rar' format");
+                                    System.out.println("> Try to use `RarDearchiver` for reading");
+                                    System.out.println("> Press \"Enter\"...");
+                                    System.in.read();
+                                    refreshConsole();
+                                    break;
+                                case "XML":
+                                    System.out.println("> I think the file '" + filename + "' may have the '.xml' format");
+                                    System.out.println("> Try to use `XMLReader` for reading");
+                                    System.out.println("> Press \"Enter\"...");
+                                    System.in.read();
+                                    refreshConsole();
+                                    break;
+                                case "JSON":
+                                    System.out.println("> I think the file '" + filename + "' may have the '.json' format");
+                                    System.out.println("> Try to use `JsonReader` for reading");
+                                    System.out.println("> Press \"Enter\"...");
+                                    System.in.read();
+                                    refreshConsole();
+                                    break;
+                                case "TXT":
+                                    System.out.println("> I think the file '" + filename + "' may be encoded or have the '.txt' format");
+                                    System.out.println("> Try to use `Decoder` of 'TextFileReader' for reading");
+                                    System.out.println("> Press \"Enter\"...");
+                                    System.in.read();
+                                    refreshConsole();
+                                    break;
+                                case "Error!":
+                                default:
+                                    throw new IOException("File has unknown format or does not exist");
+                            }
+                            correctInput = true;
+                        } catch (IOException exception) {
+                            refreshConsole();
+                            System.out.println("> " + exception.getMessage());
+                            System.out.println("> Try again");
+                            System.out.println("> Press \"Enter\"...");
+                            System.in.read();
+                            refreshConsole();
+                        }
+                        break;
+                    case 8:
+                        // Exit
+                        correctInput = true;
                         break;
                     default:
-                        RefreshConsole();
-                        System.out.println("> Incorrect input!");
-                        System.out.println("> Try again");
-                        System.out.println("> Press \"Enter\"...");
-                        System.out.print("> ");
-                        System.in.read();
-                        RefreshConsole();
+                        // Handle invalid choice
+                        handleInvalidChoice();
                 }
-            }
-            catch (InputMismatchException exception)
-            {
-                RefreshConsole();
-                System.out.println("> Incorrect input!");
-                System.out.println("> Try again");
-                System.out.println("> Press \"Enter\"...");
-                System.out.print("> ");
-                System.in.read();
-                scanner.next();
-                RefreshConsole();
-            }
-            catch (IOException | InterruptedException exception)
-            {
-                RefreshConsole();
-                System.out.println("> Error while working with file!");
-                System.out.println("> Try again");
-                System.out.println("> Press \"Enter\"...");
-                System.out.print("> ");
-                System.in.read();
-                RefreshConsole();
-            }
-            catch (IllegalArgumentException exception) {
-                RefreshConsole();
-                System.out.println("> Error while working with xml file!");
-                System.out.println("> Try again");
-                System.out.println("> Press \"Enter\"...");
-                System.out.print("> ");
-                System.in.read();
-                RefreshConsole();
+                if (exit) {
+                    break;
+                }
+            } catch (FileNotFoundException exception) {
+                // Handle file not found
+                handleFileNotFoundException();
+            } catch (InputMismatchException | IOException | IllegalArgumentException exception) {
+                // Handle input mismatch
+                handleInputMismatchException();
             }
         }
-
         if (!exit) {
-            RefreshConsole();
-            System.out.println("> File successfully readed!");
-            System.out.println("> File content:");
-            for (MathExpression i : ReadedMEs) {
-                System.out.println(i.toString());
-            }
-            System.out.println("> Press \"Enter\"...");
-            System.out.print("> ");
-            System.in.read();
-            RefreshConsole();
-
-            mathExpressions.addAll(ReadedMEs);
+            mathExpressions.addAll(readExpressions);
         }
     }
+
     // Method to handle writing operations
-    private void Writing() throws IOException {
-        boolean correct_input = false;
-        while (!correct_input) {
+    private void handleWriting() throws IOException {
+        boolean correctInput = false;
+        while (!correctInput) {
             try {
-                System.out.println("> Choose output file type:");
-                System.out.println("> 1) .txt");
-                System.out.println("> 2) .json");
-                System.out.println("> 3) .xml");
-                System.out.println("> 4) .zip");
-                System.out.println("> 5) .rar");
-                System.out.println("> 6) Encoded file");
-                System.out.println("> 7) Exit");
-                System.out.print("> ");
-                int file_type = scanner.nextInt();
-                int calculator_type = 0;
-                char writer_type;
+                // Choose the output file type
+                int fileType = getUserChoice(
+                        "Choose output file type:\n1) .txt\n2) .json\n3) .xml\n4) .zip\n5) .rar\n6) Encoded file\n7) Exit",
+                        7);
+                int calculatorType = 0;
+                char writerType;
                 String filename = "";
-                if (file_type < 7 && file_type > 0) {
-                    System.out.println("> Enter filename:");
-                    System.out.print("> ");
-                    filename = scanner.next();
+
+                if (fileType < 7 && fileType > 0) {
+                    // Get the output filename
+                    filename = getUserInput("Enter filename:");
                     if (filename.endsWith("/")) {
                         filename = filename.concat(".out");
                     }
                 }
-                if (file_type < 4 && file_type > 0) {
-                    System.out.println("> Choose calculator:");
-                    System.out.println("> 1) Regex");
-                    System.out.println("> 2) API");
-                    System.out.println("> 3) Reversive Polish Notation");
-                    System.out.print("> ");
-                    calculator_type = scanner.nextInt();
-                    switch (calculator_type) {
-                        case 1:
-                        case 2:
-                        case 3:
-                            break;
-                        default:
-                            RefreshConsole();
-                            System.out.println("> Incorrect input!");
-                            System.out.println("> Try again");
-                            System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
-                            System.in.read();
-                            RefreshConsole();
-                    }
+                if (fileType < 4 && fileType > 0) {
+                    // Choose the calculator type for certain file types
+                    calculatorType = getUserChoice("Choose calculator:\n1) Regex\n2) API\n3) Reversive Polish Notation", 3);
                 }
                 String directoryPath;
-                switch (file_type) {
+                switch (fileType) {
+                    // Cases for different output file types
                     case 1:
-                        _FileWriter fw = new _FileWriter(filename);
-                        fw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                        fw.CloseFile();
-                        RefreshConsole();
+                        _FileWriter fileWriter = new _FileWriter(filename);
+                        fileWriter.WriteListOfResultsOfMathExpressions(mathExpressions, calculatorType);
+                        fileWriter.CloseFile();
+                        refreshConsole();
                         System.out.println("> File successfully written");
                         System.out.println("> Result in file " + filename);
                         mathExpressions.clear();
-                        correct_input = true;
+                        correctInput = true;
                         break;
                     case 2:
+                        // Choose the writer type for JSON
                         System.out.println("> Do you want to use Non API Writer? (y/n)");
                         System.out.print("> ");
-                        writer_type = scanner.next().charAt(0);
-                        if (writer_type == 'y') {
-                            JsonNonAPIWriter jnaw = new JsonNonAPIWriter(filename);
-                            jnaw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                        } else if (writer_type == 'n') {
-                            JsonWriter jw = new JsonWriter(filename);
-                            jw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
+                        writerType = scanner.next().charAt(0);
+                        if (writerType == 'y') {
+                            JsonNonAPIWriter jsonNonAPIWriter = new JsonNonAPIWriter(filename);
+                            jsonNonAPIWriter.WriteListOfResultsOfMathExpressions(mathExpressions, calculatorType);
+                        } else if (writerType == 'n') {
+                            JsonWriter jsonWriter = new JsonWriter(filename);
+                            jsonWriter.WriteListOfResultsOfMathExpressions(mathExpressions, calculatorType);
                         } else {
                             System.out.println("> Entered character incorrect");
-                            System.out.println("> As default API Writer have been chosen");
-                            JsonWriter jw = new JsonWriter(filename);
-                            jw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
+                            System.out.println("> As default API Writer has been chosen");
+                            JsonWriter jsonWriter = new JsonWriter(filename);
+                            jsonWriter.WriteListOfResultsOfMathExpressions(mathExpressions, calculatorType);
                         }
-                        RefreshConsole();
+                        refreshConsole();
                         System.out.println("> File successfully written");
                         System.out.println("> Result in file " + filename);
                         mathExpressions.clear();
-                        correct_input = true;
+                        correctInput = true;
                         break;
                     case 3:
+                        // Choose the writer type for XML
                         System.out.println("> Do you want to use Non API Writer? (y/n)");
                         System.out.print("> ");
-                        writer_type = scanner.next().charAt(0);
-                        if (writer_type == 'y') {
-                            XMLNonAPIWriter xnaw = new XMLNonAPIWriter(filename);
-                            xnaw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
-                        } else if (writer_type == 'n') {
-                            XMLWriter xw = new XMLWriter(filename);
-                            xw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
+                        writerType = scanner.next().charAt(0);
+                        if (writerType == 'y') {
+                            XMLNonAPIWriter xmlNonAPIWriter = new XMLNonAPIWriter(filename);
+                            xmlNonAPIWriter.WriteListOfResultsOfMathExpressions(mathExpressions, calculatorType);
+                        } else if (writerType == 'n') {
+                            XMLWriter xmlWriter = new XMLWriter(filename);
+                            xmlWriter.WriteListOfResultsOfMathExpressions(mathExpressions, calculatorType);
                         } else {
                             System.out.println("> Entered character incorrect");
-                            System.out.println("> As default API Reader have been chosen");
-                            XMLWriter xw = new XMLWriter(filename);
-                            xw.WriteListOfResultsOfMathExpressions(mathExpressions, calculator_type);
+                            System.out.println("> As default API Writer has been chosen");
+                            XMLWriter xmlWriter = new XMLWriter(filename);
+                            xmlWriter.WriteListOfResultsOfMathExpressions(mathExpressions, calculatorType);
                         }
-                        RefreshConsole();
+                        refreshConsole();
                         System.out.println("> File successfully written");
                         System.out.println("> Result in file " + filename);
                         mathExpressions.clear();
-                        correct_input = true;
+                        correctInput = true;
                         break;
                     case 4:
-                        ArchiverZip az = new ArchiverZip(filename);
+                        // Archive using ZIP
+                        ArchiverZip archiverZip = new ArchiverZip(filename);
                         System.out.println("> Enter file path: ");
                         System.out.print("> ");
                         directoryPath = scanner.next();
                         try {
-                            az.Archive(ArchiverZip.makeListOfFilesToArchive(directoryPath));
-                            az.CloseArchiverZip();
-                            RefreshConsole();
+                            archiverZip.Archive(ArchiverZip.makeListOfFilesToArchive(directoryPath));
+                            archiverZip.CloseArchiverZip();
+                            refreshConsole();
                             System.out.println("> File successfully archived");
                             System.out.println("> Result in file " + filename);
-                            correct_input = true;
+                            correctInput = true;
                         } catch (IOException exception) {
-                            RefreshConsole();
+                            refreshConsole();
                             System.out.println("> Error while working with .zip archive");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
                             System.in.read();
-                            RefreshConsole();
+                            refreshConsole();
                         }
                         break;
                     case 5:
-                        ArchiverRar ar = new ArchiverRar(filename);
+                        // Archive using RAR
+                        ArchiverRar archiverRar = new ArchiverRar(filename);
                         System.out.println("> Enter directory/file path: ");
                         System.out.print("> ");
                         directoryPath = scanner.next();
                         try {
-                            ar.Archive(directoryPath);
-                            RefreshConsole();
+                            archiverRar.Archive(directoryPath);
+                            refreshConsole();
                             System.out.println("> File successfully archived");
                             System.out.println("> Result in file " + filename);
-                            correct_input = true;
+                            correctInput = true;
                         } catch (InterruptedException | IOException exception) {
-                            RefreshConsole();
+                            refreshConsole();
                             System.out.println("> Error while working with .rar archive");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
                             System.in.read();
-                            RefreshConsole();
+                            refreshConsole();
                         }
                         break;
                     case 6:
+                        // Encode using custom Encoder
                         System.out.println("> Enter file path: ");
                         System.out.print("> ");
                         directoryPath = scanner.next();
-                        Encoder enc = new Encoder(directoryPath, filename);
+                        Encoder encoder = new Encoder(directoryPath, filename);
                         System.out.println("> Enter 16-digit key: ");
                         System.out.print("> ");
                         String key = scanner.next();
@@ -514,86 +477,127 @@ public class CLI {
                             if (key.length() != 16) {
                                 throw new InvalidKeyException("Invalid key");
                             }
-                            enc.encryptFile(key);
-                            enc.CloseEncoder();
-                            RefreshConsole();
+                            encoder.encryptFile(key);
+                            encoder.CloseEncoder();
+                            refreshConsole();
                             System.out.println("> File successfully encoded");
                             System.out.println("> Result in file " + filename);
-                            correct_input = true;
+                            correctInput = true;
                         } catch (InvalidKeyException | InvalidParameterSpecException exception) {
-                            RefreshConsole();
+                            refreshConsole();
                             System.out.println("> Incorrect or invalid key have been entered");
                             System.out.println("> The file was not encoded");
                             System.out.println("> Try again");
                             System.out.println("> Press \"Enter\"...");
-                            System.out.print("> ");
                             System.in.read();
-                            RefreshConsole();
+                            refreshConsole();
                         }
                         break;
                     case 7:
-                        correct_input = true;
+                        // Exit
+                        correctInput = true;
                         break;
                     default:
-                        RefreshConsole();
-                        System.out.println("> Incorrect input!");
-                        System.out.println("> Try again");
-                        System.out.println("> Press \"Enter\"...");
-                        System.out.print("> ");
-                        System.in.read();
-                        RefreshConsole();
+                        // Handle invalid choice
+                        handleInvalidChoice();
                 }
-            }
-            catch (InputMismatchException exception)
-            {
-                RefreshConsole();
-                System.out.println("> Incorrect input!");
-                System.out.println("> Try again");
-                System.out.println("> Press \"Enter\"...");
-                System.out.print("> ");
-                System.in.read();
-                scanner.next();
-                RefreshConsole();
-            }
-            catch (IOException exception)
-            {
-                RefreshConsole();
-                System.out.println("> Error while working with file!");
-                System.out.println("> Try again");
-                System.out.println("> Press \"Enter\"...");
-                System.out.print("> ");
-                System.in.read();
-                RefreshConsole();
-            }
-            catch (IllegalArgumentException exception) {
-                RefreshConsole();
-                System.out.println("> Error while working with xml file!");
-                System.out.println("> Try again");
-                System.out.println("> Press \"Enter\"...");
-                System.out.print("> ");
-                RefreshConsole();
+            } catch (FileNotFoundException exception) {
+                // Handle file not found
+                handleFileNotFoundException();
+            } catch (InputMismatchException | IOException | IllegalArgumentException exception) {
+                // Handle input mismatch
+                handleInputMismatchException();
             }
         }
     }
+
+    // Method to write math expressions been read
+    private void WriteContents() throws IOException {
+        refreshConsole();
+        for (var i : mathExpressions) {
+            System.out.println(i);
+        }
+        System.out.println("> Press \"Enter\"...");
+        System.in.read();
+        refreshConsole();
+    }
+
     // Method to close resources and display exit message
-    private void CloseResources() throws IOException {
-        for (var i : dearchiversZip) {
-            i.CloseDearchiverZip();
+    private void closeResources() throws IOException {
+        for (DearchiverZip dearchiverZip : dearchiversZip) {
+            dearchiverZip.CloseDearchiverZip();
         }
-        for (var i : dearchiversRar) {
-            i.CloseDearchiverRar();
+        for (DearchiverRar dearchiverRar : dearchiversRar) {
+            dearchiverRar.CloseDearchiverRar();
         }
-        for (var i : decoders) {
-            i.closeDecoder();
+        for (Decoder decoder : decoders) {
+            decoder.closeDecoder();
         }
         System.out.println("> Program successfully completed");
         System.out.println("> All temps cleared");
         System.out.println("> Exiting...");
     }
+
     // Method to refresh the console by printing new lines
-    private static void RefreshConsole() {
+    private static void refreshConsole() {
         for (int i = 0; i < 30; ++i) {
             System.out.print("\n");
         }
+    }
+
+    // Handle input mismatch
+    private void handleInputMismatchException() throws IOException {
+        refreshConsole();
+        System.out.println("> Incorrect input!");
+        System.out.println("> Try again");
+        System.out.println("> Press \"Enter\"...");
+        System.in.read();
+        scanner.next();
+        refreshConsole();
+    }
+
+    // Handle file not found
+    private void handleFileNotFoundException() throws IOException {
+        refreshConsole();
+        System.out.println("> No such file exists");
+        System.out.println("> Try again");
+        System.out.println("> Press \"Enter\"...");
+        System.in.read();
+        refreshConsole();
+    }
+
+    // Method return user choice
+    private int getUserChoice(String message, int maxChoice) throws IOException {
+        int choice;
+        while (true) {
+            try {
+                System.out.println(message);
+                System.out.print("> ");
+                choice = scanner.nextInt();
+                if (choice >= 1 && choice <= maxChoice) {
+                    return choice;
+                }
+                handleInvalidChoice();
+            } catch (InputMismatchException | IOException exception) {
+                handleInputMismatchException();
+            }
+        }
+    }
+
+    // Method return user input
+    private String getUserInput(String message) {
+        System.out.println(message);
+        System.out.print("> ");
+        return scanner.next();
+    }
+
+    // Handle invalid choice
+    private void handleInvalidChoice() throws IOException {
+        refreshConsole();
+        System.out.println("> Invalid choice!");
+        System.out.println("> Try again");
+        System.out.println("> Press \"Enter\"...");
+        System.in.read();
+        refreshConsole();
     }
 }

@@ -51,7 +51,7 @@ public class _FileReader implements TextReader {
 
             // Removing the extracted line from the remainder
             remainder = remainder.replace(0, remainder.indexOf("\n") + 1, "");
-            return lastLine;
+            return lastLine.replaceAll("\\r", "");
         }
 
         // Appending the newly read characters to the remainder
@@ -69,7 +69,7 @@ public class _FileReader implements TextReader {
         // Removing the extracted line from the remainder
         remainder = remainder.replace(0, remainder.indexOf("\n") + 1, "");
 
-        return lastLine;
+        return lastLine.replaceAll("\\r", "");
     }
 
     // Method to read an integer from the file

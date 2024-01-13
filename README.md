@@ -52,8 +52,8 @@ Add Web functionality and combine everything together: UI and Web.
 - [x] Add a rar archiver
 - [x] Add an encoder
 - [x] Add a decoder
-- [ ] Add an automatic format checker
-- [X] Cover all code with unit-tests (Coverage is 88%)
+- [X] Add an automatic format checker
+- [X] Cover all code with unit-tests (Coverage is 92%)
 - [X] Add a standardized exception handling
 - [ ] Add a design patterns
 - [x] Add a CLI

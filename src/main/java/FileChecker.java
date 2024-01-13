@@ -12,7 +12,7 @@ public class FileChecker {
     // Regular expressions to identify file formats
     static Pattern regex_zip = Pattern.compile("^PK");   // ZIP file signature
     static Pattern regex_rar = Pattern.compile("^Rar!");     // RAR file signature
-    static Pattern regex_XML = Pattern.compile("^<?xml");   // XML file signature
+    static Pattern regex_XML = Pattern.compile("^<\\?xml");   // XML file signature
 
     /**
      * Checks the format of the provided input stream.
@@ -25,6 +25,7 @@ public class FileChecker {
         // Read the first line of the file
         _BufferedFileReader FR = new _BufferedFileReader(file, "UTF-8");
         String str = FR.ReadString();
+        FR.CloseFile();
 
         // Determine the format based on the first line
         switch (ParseString(str)) {
