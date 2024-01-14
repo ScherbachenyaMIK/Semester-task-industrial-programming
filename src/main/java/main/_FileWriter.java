@@ -1,3 +1,5 @@
+package main;
+
 import com.udojava.evalex.Expression;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -13,7 +15,7 @@ public class _FileWriter implements TextWriter {
     private int count = 1;
 
     // Constructor to create a FileWriter with the specified filename
-    _FileWriter(String filename) throws IOException {
+    public _FileWriter(String filename) throws IOException {
         File_ = new FileWriter(filename);
     }
 

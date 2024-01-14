@@ -1,3 +1,5 @@
+package main;
+
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -15,7 +17,7 @@ public class ArchiverZip {
     private ZipArchiveOutputStream ZipStream;
 
     // Constructor to initialize the FileOutputStream and ZipArchiveOutputStream
-    ArchiverZip(String filename) throws IOException {
+    public ArchiverZip(String filename) throws IOException {
         File_ = new FileOutputStream(filename);
         ZipStream = new ZipArchiveOutputStream(File_);
     }
@@ -36,14 +38,14 @@ public class ArchiverZip {
 
         // Checking if the specified path is a file, and adding it to the result list if true
         if (folder.isFile()) {
-            result.add(folder.getPath());
+            result.add(folder.getPath().replaceAll("\\\\", "/"));
         } else {
             // If the path is not a file, it should be a directory
             if (!folder.exists() || !folder.isDirectory()) {
                 throw new FileNotFoundException();
             }
             // Adding the directory path to the result list
-            result.add(directoryPath);
+            result.add(directoryPath.replaceAll("\\\\", "/"));
             // Calling the recursive helper method to list files within the directory
             listFiles(folder, result);
         }
@@ -77,6 +79,7 @@ public class ArchiverZip {
             if (!file_check.exists()) {
                 throw new FileNotFoundException("Error while working with .zip archive, file not exists");
             }
+            file = file.replaceAll("[A-Za-z]:/", "");
             // Creating a ZipArchiveEntry for the file
             ArchiveEntry entry = new ZipArchiveEntry(file);
 

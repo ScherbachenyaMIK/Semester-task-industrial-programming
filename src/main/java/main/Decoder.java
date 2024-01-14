@@ -1,3 +1,5 @@
+package main;
+
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
@@ -21,7 +23,7 @@ public class Decoder {
     private String OutputPath;
 
     // Constructor to initialize input and output streams, and the output file path
-    Decoder(String inputFilePath, String outputFilePath) throws FileNotFoundException {
+    public Decoder(String inputFilePath, String outputFilePath) throws FileNotFoundException {
         inputStream = new FileInputStream(inputFilePath);
         outputStream = new FileOutputStream(outputFilePath);
         OutputPath = outputFilePath;

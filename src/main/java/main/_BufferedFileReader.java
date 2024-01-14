@@ -1,3 +1,5 @@
+package main;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -6,9 +8,9 @@ public class _BufferedFileReader implements TextReader {
     // BufferedReader to read text from the file
     private BufferedReader File_;
 
-    // Constructor that takes a _FileReader as a parameter
-    _BufferedFileReader(_FileReader fileReader) throws FileNotFoundException {
-        // Creating a BufferedReader using the _FileReader's FileReader
+    // Constructor that takes a main._FileReader as a parameter
+    public _BufferedFileReader(_FileReader fileReader) throws FileNotFoundException {
+        // Creating a BufferedReader using the main._FileReader's FileReader
         File_ = new BufferedReader(fileReader.getFile_());
     }
 
@@ -77,7 +79,7 @@ public class _BufferedFileReader implements TextReader {
             File_.reset();
         }
 
-        // Creating a new MathExpression object with the read expression and variables
+        // Creating a new main.MathExpression object with the read expression and variables
         return new MathExpression(expression, variables);
     }
 

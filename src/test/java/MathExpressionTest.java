@@ -1,4 +1,6 @@
 import com.udojava.evalex.Expression;
+import main.MathExpression;
+import main.Result;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Test;
 
@@ -692,7 +694,7 @@ class MathExpressionTest {
 }
 
 class RegexCalculatorTest {
-    Class<?> RegexCalculator = Class.forName("MathExpression$RegexCalculator");
+    Class<?> RegexCalculator = Class.forName("main.MathExpression$RegexCalculator");
     Constructor<?> constructor = RegexCalculator.getDeclaredConstructor(String.class);
     Method summation = RegexCalculator.getDeclaredMethod("Summation", String.class);
     Method subtraction = RegexCalculator.getDeclaredMethod("Subtraction", String.class);
@@ -855,7 +857,7 @@ class RegexCalculatorTest {
 }
 
 class APICalculatorTest {
-    Class<?> RegexCalculator = Class.forName("MathExpression$APICalculator");
+    Class<?> RegexCalculator = Class.forName("main.MathExpression$APICalculator");
     Constructor<?> constructor = RegexCalculator.getDeclaredConstructor(String.class);
     APICalculatorTest() throws NoSuchMethodException, ClassNotFoundException {
         constructor.setAccessible(true);
@@ -913,7 +915,7 @@ class APICalculatorTest {
 }
 
 class ReversivePolishNotationCalculatorTest {
-    Class<?> RegexCalculator = Class.forName("MathExpression$ReversivePolishNotationCalculator");
+    Class<?> RegexCalculator = Class.forName("main.MathExpression$ReversivePolishNotationCalculator");
     Constructor<?> constructor = RegexCalculator.getDeclaredConstructor(String.class);
     Method toRPN = RegexCalculator.getDeclaredMethod("toRPN", String.class);
     Method isOperator = RegexCalculator.getDeclaredMethod("isOperator", Character.TYPE);

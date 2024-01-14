@@ -1,3 +1,5 @@
+package main;
+
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.FileUtils;
@@ -17,7 +19,7 @@ public class DearchiverZip {
     private String OutputFiles;
 
     // Constructor to initialize the input ZIP archive file and set the output directory path
-    DearchiverZip(String filename) throws IOException {
+    public DearchiverZip(String filename) throws IOException {
         File_ = new FileInputStream(filename);
         ZipStream = new ZipArchiveInputStream(File_);
         OutputFiles = filename.substring(0, filename.length() - 4) + "/";

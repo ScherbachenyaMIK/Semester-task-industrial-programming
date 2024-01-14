@@ -1,3 +1,5 @@
+package main;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -40,25 +42,25 @@ interface NonAPIHyperTextReader extends HyperTextReader {
 /*
 Whole inheritance diagram:
                                     __________
-                                    | Reader |
+                                    | main.Reader |
                                     ----------
                                         |
                    |----------------------------------------------------|
                    |                                                    |
                   \/                                                   \/
              ______________                                   ___________________
-             | TextReader |                                   | HyperTextReader |
+             | main.TextReader |                                   | main.HyperTextReader |
              --------------                                   -------------------
                    |                                                   |
          |---------------------|                           |------------------------|
         \/                    \/                          \/                       \/
    _______________  _______________________     ______________________  _________________________
-   | _FileReader |  | _BufferedFileReader |     | APIHyperTextReader |  | NonAPIHyperTextReader |
+   | main._FileReader |  | main._BufferedFileReader |     | main.APIHyperTextReader |  | main.NonAPIHyperTextReader |
    ---------------  -----------------------     ----------------------  -------------------------
                                                           |                        |
                                          |--------------------|                  |---------------------|
                                         \/                   \/                 \/                    \/
                                    _____________       ______________   ___________________   ____________________
-                                   | XMLReader |       | JsonReader |   | XMLNonAPIReader |   | JsonNonAPIReader |
+                                   | main.XMLReader |       | main.JsonReader |   | main.XMLNonAPIReader |   | main.JsonNonAPIReader |
                                    -------------       --------------   -------------------   --------------------
 */

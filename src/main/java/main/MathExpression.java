@@ -1,3 +1,5 @@
+package main;
+
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class MathExpression {
     }
 
     // Constructor with expression and variable information
-    MathExpression(String expression_, ArrayList<String> variables_) throws IllegalArgumentException {
+    public MathExpression(String expression_, ArrayList<String> variables_) throws IllegalArgumentException {
         // Validate input
         if (expression_ == null) {
             throw new IllegalArgumentException("Expression is null");
@@ -70,7 +72,7 @@ public class MathExpression {
     }
 
     // Replace variables with their corresponding numeric values
-    String replaceVariablesWithNumbers() {
+    public String replaceVariablesWithNumbers() {
         String new_expression = expression;
 
         // Replace each variable with its numeric value
@@ -113,7 +115,7 @@ public class MathExpression {
         throw new IllegalArgumentException("Invalid argument");
     }
 
-    // Override toString to provide a string representation of the MathExpression
+    // Override toString to provide a string representation of the main.MathExpression
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("expression : " + expression + "\nvariables:\n");
@@ -135,7 +137,7 @@ public class MathExpression {
         return result.toString();
     }
 
-    // Override equals to compare MathExpression objects
+    // Override equals to compare main.MathExpression objects
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof MathExpression)) {
@@ -386,23 +388,3 @@ public class MathExpression {
     }
 }
 
-// Class representing the result of a calculation
-class Result {
-    @Getter
-    private String result;
-
-    // Default constructor
-    Result() {
-        result = "";
-    }
-
-    // Constructor with an error character
-    Result(char e) {
-        result = "error!";
-    }
-
-    // Constructor with a valid result string
-    Result(String result_) {
-        result = result_;
-    }
-}

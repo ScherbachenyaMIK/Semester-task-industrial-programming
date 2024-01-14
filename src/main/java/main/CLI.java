@@ -1,4 +1,5 @@
-import java.io.File;
+package main;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -93,7 +94,7 @@ public class CLI {
                     // Cases for different input file types
                     case 1:
                         // Text file
-                        System.out.println("> Do you want to use Buffered Reader? (y/n)");
+                        System.out.println("> Do you want to use Buffered main.Reader? (y/n)");
                         System.out.print("> ");
                         readerType = scanner.next().charAt(0);
                         try {
@@ -107,7 +108,7 @@ public class CLI {
                                 fr.CloseFile();
                             } else {
                                 System.out.println("> Entered character incorrect");
-                                System.out.println("> Defaulting to Reader without buffer");
+                                System.out.println("> Defaulting to main.Reader without buffer");
                                 _FileReader fr = new _FileReader(filename);
                                 readExpressions = fr.ReadListOfMathExpressions();
                                 fr.CloseFile();
@@ -125,7 +126,7 @@ public class CLI {
                         break;
                     case 2:
                         // JSON file
-                        System.out.println("> Do you want to use Non API Reader? (y/n)");
+                        System.out.println("> Do you want to use Non API main.Reader? (y/n)");
                         System.out.print("> ");
                         readerType = scanner.next().charAt(0);
                         try {
@@ -138,7 +139,7 @@ public class CLI {
                                 readExpressions = jr.ReadListOfMathExpressions();
                             } else {
                                 System.out.println("> Entered character incorrect");
-                                System.out.println("> Defaulting to API Reader");
+                                System.out.println("> Defaulting to API main.Reader");
                                 JsonReader jr = new JsonReader(filename);
                                 readExpressions = jr.ReadListOfMathExpressions();
                             }
@@ -155,7 +156,7 @@ public class CLI {
                         break;
                     case 3:
                         // XML file
-                        System.out.println("> Do you want to use Non API Reader? (y/n)");
+                        System.out.println("> Do you want to use Non API main.Reader? (y/n)");
                         System.out.print("> ");
                         readerType = scanner.next().charAt(0);
                         try {
@@ -168,7 +169,7 @@ public class CLI {
                                 readExpressions = xr.ReadListOfMathExpressions();
                             } else {
                                 System.out.println("> Entered character incorrect");
-                                System.out.println("> Defaulting to API Reader");
+                                System.out.println("> Defaulting to API main.Reader");
                                 XMLReader xr = new XMLReader(filename);
                                 readExpressions = xr.ReadListOfMathExpressions();
                             }
@@ -281,21 +282,21 @@ public class CLI {
                                     break;
                                 case "XML":
                                     System.out.println("> I think the file '" + filename + "' may have the '.xml' format");
-                                    System.out.println("> Try to use `XMLReader` for reading");
+                                    System.out.println("> Try to use `main.XMLReader` for reading");
                                     System.out.println("> Press \"Enter\"...");
                                     System.in.read();
                                     refreshConsole();
                                     break;
                                 case "JSON":
                                     System.out.println("> I think the file '" + filename + "' may have the '.json' format");
-                                    System.out.println("> Try to use `JsonReader` for reading");
+                                    System.out.println("> Try to use `main.JsonReader` for reading");
                                     System.out.println("> Press \"Enter\"...");
                                     System.in.read();
                                     refreshConsole();
                                     break;
                                 case "TXT":
                                     System.out.println("> I think the file '" + filename + "' may be encoded or have the '.txt' format");
-                                    System.out.println("> Try to use `Decoder` of 'TextFileReader' for reading");
+                                    System.out.println("> Try to use `main.Decoder` of 'TextFileReader' for reading");
                                     System.out.println("> Press \"Enter\"...");
                                     System.in.read();
                                     refreshConsole();
@@ -371,7 +372,7 @@ public class CLI {
                         fileWriter.CloseFile();
                         refreshConsole();
                         System.out.println("> File successfully written");
-                        System.out.println("> Result in file " + filename);
+                        System.out.println("> main.Result in file " + filename);
                         mathExpressions.clear();
                         correctInput = true;
                         break;
@@ -394,7 +395,7 @@ public class CLI {
                         }
                         refreshConsole();
                         System.out.println("> File successfully written");
-                        System.out.println("> Result in file " + filename);
+                        System.out.println("> main.Result in file " + filename);
                         mathExpressions.clear();
                         correctInput = true;
                         break;
@@ -417,7 +418,7 @@ public class CLI {
                         }
                         refreshConsole();
                         System.out.println("> File successfully written");
-                        System.out.println("> Result in file " + filename);
+                        System.out.println("> main.Result in file " + filename);
                         mathExpressions.clear();
                         correctInput = true;
                         break;
@@ -432,7 +433,7 @@ public class CLI {
                             archiverZip.CloseArchiverZip();
                             refreshConsole();
                             System.out.println("> File successfully archived");
-                            System.out.println("> Result in file " + filename);
+                            System.out.println("> main.Result in file " + filename);
                             correctInput = true;
                         } catch (IOException exception) {
                             refreshConsole();
@@ -453,7 +454,7 @@ public class CLI {
                             archiverRar.Archive(directoryPath);
                             refreshConsole();
                             System.out.println("> File successfully archived");
-                            System.out.println("> Result in file " + filename);
+                            System.out.println("> main.Result in file " + filename);
                             correctInput = true;
                         } catch (InterruptedException | IOException exception) {
                             refreshConsole();
@@ -465,7 +466,7 @@ public class CLI {
                         }
                         break;
                     case 6:
-                        // Encode using custom Encoder
+                        // Encode using custom main.Encoder
                         System.out.println("> Enter file path: ");
                         System.out.print("> ");
                         directoryPath = scanner.next();
@@ -481,7 +482,7 @@ public class CLI {
                             encoder.CloseEncoder();
                             refreshConsole();
                             System.out.println("> File successfully encoded");
-                            System.out.println("> Result in file " + filename);
+                            System.out.println("> main.Result in file " + filename);
                             correctInput = true;
                         } catch (InvalidKeyException | InvalidParameterSpecException exception) {
                             refreshConsole();

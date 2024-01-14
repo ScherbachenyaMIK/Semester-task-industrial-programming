@@ -1,3 +1,5 @@
+package main;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -18,7 +20,7 @@ public class Encoder {
     private OutputStream outputStream;
 
     // Constructor to initialize input and output streams
-    Encoder(String inputFilePath, String outputFilePath) throws FileNotFoundException {
+    public Encoder(String inputFilePath, String outputFilePath) throws FileNotFoundException {
         inputStream = new FileInputStream(inputFilePath);
         outputStream = new FileOutputStream(outputFilePath);
     }

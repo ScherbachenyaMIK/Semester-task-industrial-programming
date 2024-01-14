@@ -1,3 +1,7 @@
+import main.MathExpression;
+import main._BufferedFileReader;
+import main._FileReader;
+import main._FileWriter;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;

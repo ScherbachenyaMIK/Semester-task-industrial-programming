@@ -1,3 +1,5 @@
+package main;
+
 import lombok.Getter;
 
 import java.io.*;
@@ -16,7 +18,7 @@ public class _FileReader implements TextReader {
     private static final int BUFFER_SIZE = 1024;
 
     // Constructor that takes a filename as a parameter
-    _FileReader(String filename) throws FileNotFoundException {
+    public _FileReader(String filename) throws FileNotFoundException {
         // Creating a FileReader for the specified filename
         File_ = new FileReader(filename);
     }
@@ -116,7 +118,7 @@ public class _FileReader implements TextReader {
             remainder.insert(0, variable + "\n");
         }
 
-        // Creating a new MathExpression object with the read expression and variables
+        // Creating a new main.MathExpression object with the read expression and variables
         return new MathExpression(expression, variables);
     }
 

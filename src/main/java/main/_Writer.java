@@ -1,3 +1,5 @@
+package main;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -49,25 +51,25 @@ interface NonAPIHyperTextWriter extends HyperTextWriter {
 /*
 Whole inheritance diagram:
                                     ___________
-                                    | _Writer |
+                                    | main._Writer |
                                     -----------
                                          |
                    |----------------------------------------------------|
                    |                                                    |
                   \/                                                   \/
              ______________                                   ___________________
-             | TextWriter |                                   | HyperTextWriter |
+             | main.TextWriter |                                   | main.HyperTextWriter |
              --------------                                   -------------------
                    |                                                   |
                    |                                       |------------------------|
                   \/                                      \/                       \/
            _______________                      ______________________  _________________________
-           | _FileWriter |                      | APIHyperTextWriter |  | NonAPIHyperTextWriter |
+           | main._FileWriter |                      | main.APIHyperTextWriter |  | main.NonAPIHyperTextWriter |
            ---------------                      ----------------------  -------------------------
                                                           |                        |
                                          |--------------------|                  |---------------------|
                                         \/                   \/                 \/                    \/
                                    _____________       ______________   ___________________   ____________________
-                                   | XMLWriter |       | JsonWriter |   | XMLNonAPIWriter |   | JsonNonAPIWriter |
+                                   | main.XMLWriter |       | main.JsonWriter |   | main.XMLNonAPIWriter |   | main.JsonNonAPIWriter |
                                    -------------       --------------   -------------------   --------------------
 */

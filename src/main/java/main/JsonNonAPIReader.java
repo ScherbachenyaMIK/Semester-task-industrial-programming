@@ -1,155 +1,23 @@
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+package main;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JsonReader implements APIHyperTextReader {
-    private File File_;
-    private ObjectMapper objectMapper;
-
-    // Constructor taking filename as input
-    JsonReader(String filename) {
-        // Initialize ObjectMapper and register MathExpressionDeserializer
-        objectMapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(MathExpression.class, new MathExpressionDeserializer());
-        objectMapper.registerModule(module);
-        // Set the file for reading
-        File_ = new File(filename);
-    }
-
-    // Constructor taking File as input
-    JsonReader(File EnterFile) {
-        // Initialize ObjectMapper
-        objectMapper = new ObjectMapper();
-        // Set the file for reading
-        File_ = EnterFile;
-    }
-
-    // Method to read a String from JSON
-    public String ReadString() throws IllegalArgumentException, FileNotFoundException {
-        try {
-            return objectMapper.readValue(File_, String.class);
-        } catch (FileNotFoundException exception) {
-            throw new FileNotFoundException(exception.getMessage());
-        } catch (IOException | NullPointerException exception) {
-            throw new IllegalArgumentException("Cannot deserialize String");
-        }
-    }
-
-    // Method to read an Integer from JSON
-    public int ReadInteger() throws IllegalArgumentException, FileNotFoundException {
-        try {
-            return objectMapper.readValue(File_, Integer.class);
-        } catch (FileNotFoundException exception) {
-            throw new FileNotFoundException(exception.getMessage());
-        } catch (IOException | NullPointerException exception) {
-            throw new IllegalArgumentException("Cannot deserialize Integer");
-        }
-    }
-
-    // Method to read a MathExpression from JSON
-    public MathExpression ReadMathExpression() throws IllegalArgumentException, FileNotFoundException {
-        try {
-            return objectMapper.readValue(File_, MathExpression.class);
-        } catch (FileNotFoundException exception) {
-            throw new FileNotFoundException(exception.getMessage());
-        } catch (IOException | NullPointerException exception) {
-            throw new IllegalArgumentException("Cannot deserialize math expression");
-        }
-    }
-
-    // Method to read a list of MathExpressions from JSON
-    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IllegalArgumentException, FileNotFoundException {
-        try {
-            return objectMapper.readValue(File_, new TypeReference<ArrayList<MathExpression>>() {
-            });
-        } catch (FileNotFoundException exception) {
-            throw new FileNotFoundException(exception.getMessage());
-        } catch (IOException | NullPointerException exception) {
-            throw new IllegalArgumentException("Cannot deserialize list of math expressions");
-        }
-    }
-}
-
-// Custom deserializer for MathExpression class
-class MathExpressionDeserializer extends StdDeserializer<MathExpression> {
-
-    public MathExpressionDeserializer() {
-        this(null);
-    }
-
-    public MathExpressionDeserializer(Class<?> vc) {
-        super(vc);
-    }
-
-    @Override
-    public MathExpression deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
-        // Read the JSON node
-        JsonNode node = jp.getCodec().readTree(jp);
-
-        // Create MathExpression object
-        MathExpression mathExpression = new MathExpression();
-        mathExpression.setExpression(node.get("expression").asText());
-
-        // Read variables from JSON node
-        JsonNode variablesNode = node.get("variables");
-        ArrayList<Character> variables = new ArrayList<>();
-        for (JsonNode varNode : variablesNode) {
-            variables.add(varNode.asText().charAt(0));
-        }
-        mathExpression.setVariables(variables);
-
-        // Read types from JSON node
-        JsonNode typesNode = node.get("types");
-        ArrayList<Character> types = new ArrayList<>();
-        for (JsonNode varNode : typesNode) {
-            types.add(varNode.asText().charAt(0));
-        }
-        mathExpression.setTypes(types);
-
-        // Read integers from JSON node
-        JsonNode integersNode = node.get("integers");
-        ArrayList<ImmutablePair<Integer, Integer>> integers = new ArrayList<>();
-        for (JsonNode varNode : integersNode) {
-            String left = varNode.fieldNames().next();
-            integers.add(new ImmutablePair<>(Integer.parseInt(left), varNode.get(left).asInt()));
-        }
-        mathExpression.setIntegers(integers);
-
-        // Read doubles from JSON node
-        JsonNode doublesNode = node.get("doubles");
-        ArrayList<ImmutablePair<Double, Integer>> doubles = new ArrayList<>();
-        for (JsonNode varNode : doublesNode) {
-            String left = varNode.fieldNames().next();
-            doubles.add(new ImmutablePair<>(Double.parseDouble(left), varNode.get(left).asInt()));
-        }
-        mathExpression.setDoubles(doubles);
-
-        // Return the MathExpression object
-        return mathExpression;
-    }
-}
-
-class JsonNonAPIReader implements NonAPIHyperTextReader {
+public class JsonNonAPIReader implements NonAPIHyperTextReader {
 
     // Private member to handle file reading
     private _BufferedFileReader reader;
 
     // Constructor that takes a filename and initializes the reader
-    JsonNonAPIReader(String filename) throws FileNotFoundException {
+    public JsonNonAPIReader(String filename) throws FileNotFoundException {
         // Check if the file exists
         File file = new File(filename);
         if (!file.exists()) {
@@ -197,7 +65,7 @@ class JsonNonAPIReader implements NonAPIHyperTextReader {
         }
     }
 
-    // Read a MathExpression object from the JSON
+    // Read a main.MathExpression object from the JSON
     public MathExpression ReadMathExpression() throws IllegalArgumentException {
         try {
             // Read the JSON content into a StringBuilder
@@ -222,7 +90,7 @@ class JsonNonAPIReader implements NonAPIHyperTextReader {
                 nodes.put(matcher.group(1), matcher.group(2));
             }
 
-            // Extract values from the map and create a MathExpression object
+            // Extract values from the map and create a main.MathExpression object
             String expression = nodes.get("expression");
             ArrayList<Character> variables = parseCharacterArray(nodes.get("variables"));
             ArrayList<Character> types = parseCharacterArray(nodes.get("types"));
@@ -242,10 +110,10 @@ class JsonNonAPIReader implements NonAPIHyperTextReader {
         }
     }
 
-    // Read a list of MathExpression objects from the JSON
+    // Read a list of main.MathExpression objects from the JSON
     public ArrayList<MathExpression> ReadListOfMathExpressions() throws IllegalArgumentException {
         try {
-            // Initialize a list to store MathExpression objects
+            // Initialize a list to store main.MathExpression objects
             ArrayList<MathExpression> expressions = new ArrayList<>();
             // Initialize a StringBuilder to store JSON content
             StringBuilder data = new StringBuilder();
@@ -262,21 +130,21 @@ class JsonNonAPIReader implements NonAPIHyperTextReader {
             }
             data.insert(data.length() - 3, "\n");
 
-            // Split JSON content into individual MathExpression strings
+            // Split JSON content into individual main.MathExpression strings
             String[] mathExpressionsContent = data.substring(3, data.length() - 3).split("\n}, \\{");
             String tab = "  ";
             Pattern expression_pattern = Pattern.compile(tab + "\"(.*?)\" : (.*?)(,\n|\n)");
 
-            // Process each MathExpression string
+            // Process each main.MathExpression string
             for (String expressionContent : mathExpressionsContent) {
                 Matcher matcher = expression_pattern.matcher(expressionContent);
                 HashMap<String, String> nodes = new HashMap<>();
-                // Extract key-value pairs for each MathExpression
+                // Extract key-value pairs for each main.MathExpression
                 while (matcher.find()) {
                     nodes.put(matcher.group(1), matcher.group(2));
                 }
 
-                // Extract values from the map and create a MathExpression object
+                // Extract values from the map and create a main.MathExpression object
                 String expression = nodes.get("expression");
                 ArrayList<Character> variables = parseCharacterArray(nodes.get("variables"));
                 ArrayList<Character> types = parseCharacterArray(nodes.get("types"));
@@ -293,7 +161,7 @@ class JsonNonAPIReader implements NonAPIHyperTextReader {
                 expressions.add(mathExpression);
             }
 
-            // Return the list of MathExpression objects
+            // Return the list of main.MathExpression objects
             return expressions;
         } catch (IOException | NullPointerException exception) {
             throw new IllegalArgumentException("Cannot deserialize math expression");

@@ -22,7 +22,7 @@ The task is to find all arithmetic operations in the input file and replace them
 - API
 
 Add a UI:
-- CLI
+- main.CLI
 - GUI
   
 Add Web functionality and combine everything together: UI and Web.
@@ -30,35 +30,35 @@ Add Web functionality and combine everything together: UI and Web.
 ---
 
 ## List of subtasks
-- [x] Add a MathExpression class to store read data
-- [x] Add a Result class to store results
+- [x] Add a main.MathExpression class to store read data
+- [x] Add a main.Result class to store results
 - [x] Add a regex calculator
 - [x] Add a reverse polish notation calculator
 - [x] Add an API calculator
 - [x] Add a text writer
-- [x] Add a text Reader
-- [x] Add a text Buffered Reader
+- [x] Add a text main.Reader
+- [x] Add a text Buffered main.Reader
 - [x] Add a json API writer
 - [x] Add a json non API writer
-- [x] Add a json API Reader
-- [x] Add a json non API Reader
+- [x] Add a json API main.Reader
+- [x] Add a json non API main.Reader
 - [x] Add an XML API writer
 - [x] Add an XML non API writer
-- [x] Add a XML API Reader
-- [x] Add a XML non API Reader
+- [x] Add a XML API main.Reader
+- [x] Add a XML non API main.Reader
 - [x] Add a zip dearchiver
 - [x] Add a zip archiver
 - [x] Add a rar dearchiver
 - [x] Add a rar archiver
 - [x] Add an encoder
 - [x] Add a decoder
-- [X] Add an automatic format checker
-- [X] Cover all code with unit-tests (Coverage is 92%)
+- [x] Add an automatic format checker
+- [x] Cover all code with unit-tests (Coverage is 92%)
 - [X] Add a standardized exception handling
 - [ ] Add a design patterns
-- [x] Add a CLI
-- [ ] Add a GUI
-- [ ] Combine GUI and CLI
+- [x] Add a main.CLI
+- [x] Add a GUI
+- [x] Combine GUI and main.CLI
 - [ ] Add a Web
 - [ ] Combine UI and Web
 

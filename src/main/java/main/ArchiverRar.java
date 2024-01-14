@@ -1,3 +1,5 @@
+package main;
+
 import java.io.*;
 
 public class ArchiverRar {
@@ -6,7 +8,7 @@ public class ArchiverRar {
     String filename;
 
     // Constructor to initialize the filename
-    ArchiverRar(String filename_) {
+    public ArchiverRar(String filename_) {
         filename = filename_;
     }
 

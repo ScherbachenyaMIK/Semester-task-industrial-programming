@@ -1,3 +1,4 @@
+import main.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -94,13 +95,13 @@ class XMLWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <MathExpression>
+                  <main.MathExpression>
                     <expression>x + y + t + p / r + g</expression>
                     <variables>"x""y""t""g""p""r"</variables>
                     <types>"i""i""d""i""d""d"</types>
                     <integers>"(0,0)""(1,1)""(1,3)"</integers>
                     <doubles>"(1.0,2)""(0.057,4)""(-0.058,5)"</doubles>
-                  </MathExpression>
+                  </main.MathExpression>
                 </Content>
                 """, result.toString());
         BFR.close();
@@ -149,27 +150,27 @@ class XMLWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <MathExpression>
+                  <main.MathExpression>
                     <expression>x + y + t + p / r + g</expression>
                     <variables>"x""y""t""g""p""r"</variables>
                     <types>"i""i""d""i""d""d"</types>
                     <integers>"(0,0)""(1,1)""(1,3)"</integers>
                     <doubles>"(1.0,2)""(0.057,4)""(-0.058,5)"</doubles>
-                  </MathExpression>
-                  <MathExpression>
+                  </main.MathExpression>
+                  <main.MathExpression>
                     <expression>x + y + t + p / r</expression>
                     <variables>"x""y""t""p""r"</variables>
                     <types>"i""i""i""d""d"</types>
                     <integers>"(6,0)""(1,1)""(40,2)"</integers>
                     <doubles>"(1.057,3)""(-0.058,4)"</doubles>
-                  </MathExpression>
-                  <MathExpression>
+                  </main.MathExpression>
+                  <main.MathExpression>
                     <expression>x * y</expression>
                     <variables>"x""x""y"</variables>
                     <types>"d""d""d"</types>
                     <integers>""</integers>
                     <doubles>"(6.0E-6,0)""(6.0E-6,1)""(-100000.0,2)"</doubles>
-                  </MathExpression>
+                  </main.MathExpression>
                 </Content>
                 """, result.toString());
         BFR.close();
@@ -197,9 +198,9 @@ class XMLWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <Result>
+                  <main.Result>
                     <result>error!</result>
-                  </Result>
+                  </main.Result>
                 </Content>
                 """, result.toString());
         BFR.close();
@@ -251,18 +252,18 @@ class XMLWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <Result>
+                  <main.Result>
                     <result>2.017241</result>
-                  </Result>
-                  <Result>
+                  </main.Result>
+                  <main.Result>
                     <result>28.77586</result>
-                  </Result>
-                  <Result>
+                  </main.Result>
+                  <main.Result>
                     <result>-0.6</result>
-                  </Result>
-                  <Result>
+                  </main.Result>
+                  <main.Result>
                     <result>error!</result>
-                  </Result>
+                  </main.Result>
                 </Content>
                 """, result.toString());
         BFR.close();
@@ -358,13 +359,13 @@ class XMLNonAPIWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <MathExpression>
+                  <main.MathExpression>
                     <expression>x + y + t + p / r + g</expression>
                     <variables>"x""y""t""g""p""r"</variables>
                     <types>"i""i""d""i""d""d"</types>
                     <integers>"(0,0)""(1,1)""(1,3)"</integers>
                     <doubles>"(1.0,2)""(0.057,4)""(-0.058,5)"</doubles>
-                  </MathExpression>
+                  </main.MathExpression>
                 </Content>
                 """, result.toString());
         BFR.close();
@@ -412,27 +413,27 @@ class XMLNonAPIWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <MathExpression>
+                  <main.MathExpression>
                     <expression>x + y + t + p / r + g</expression>
                     <variables>"x""y""t""g""p""r"</variables>
                     <types>"i""i""d""i""d""d"</types>
                     <integers>"(0,0)""(1,1)""(1,3)"</integers>
                     <doubles>"(1.0,2)""(0.057,4)""(-0.058,5)"</doubles>
-                  </MathExpression>
-                  <MathExpression>
+                  </main.MathExpression>
+                  <main.MathExpression>
                     <expression>x + y + t + p / r</expression>
                     <variables>"x""y""t""p""r"</variables>
                     <types>"i""i""i""d""d"</types>
                     <integers>"(6,0)""(1,1)""(40,2)"</integers>
                     <doubles>"(1.057,3)""(-0.058,4)"</doubles>
-                  </MathExpression>
-                  <MathExpression>
+                  </main.MathExpression>
+                  <main.MathExpression>
                     <expression>x * y</expression>
                     <variables>"x""x""y"</variables>
                     <types>"d""d""d"</types>
                     <integers>""</integers>
                     <doubles>"(6.0E-6,0)""(6.0E-6,1)""(-100000.0,2)"</doubles>
-                  </MathExpression>
+                  </main.MathExpression>
                 </Content>
                 """, result.toString());
         BFR.close();
@@ -459,9 +460,9 @@ class XMLNonAPIWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <Result>
+                  <main.Result>
                     <result>error!</result>
-                  </Result>
+                  </main.Result>
                 </Content>
                 """, result.toString());
         BFR.close();
@@ -512,18 +513,18 @@ class XMLNonAPIWriterTests {
         assertEquals("""
                 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <Content>
-                  <Result>
+                  <main.Result>
                     <result>2.017241</result>
-                  </Result>
-                  <Result>
+                  </main.Result>
+                  <main.Result>
                     <result>28.77586</result>
-                  </Result>
-                  <Result>
+                  </main.Result>
+                  <main.Result>
                     <result>-0.6</result>
-                  </Result>
-                  <Result>
+                  </main.Result>
+                  <main.Result>
                     <result>error!</result>
-                  </Result>
+                  </main.Result>
                 </Content>
                 """, result.toString());
         BFR.close();
