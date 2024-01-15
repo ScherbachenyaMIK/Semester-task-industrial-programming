@@ -1,35 +1,31 @@
 package main;
 
+import lombok.Getter;
+
 import java.io.*;
 import java.util.ArrayList;
 
-public class _BufferedFileReader implements TextReader {
-
+public class _BufferedFileReader extends TextReader {
     // BufferedReader to read text from the file
-    private BufferedReader File_;
+    private BufferedReader bufferedReader;
 
     // Constructor that takes a main._FileReader as a parameter
     public _BufferedFileReader(_FileReader fileReader) throws FileNotFoundException {
-        // Creating a BufferedReader using the main._FileReader's FileReader
-        File_ = new BufferedReader(fileReader.getFile_());
-    }
-
-    // Constructor that takes an InputStream and a charsetName as parameters
-    _BufferedFileReader(InputStream fileReader, String charsetName) throws UnsupportedEncodingException {
-        // Creating a BufferedReader using an InputStreamReader with the specified charsetName
-        File_ = new BufferedReader(new InputStreamReader(fileReader, charsetName));
+        super(fileReader.getFilename());
+        // Creating a BufferedReader using the filename
+        bufferedReader = new BufferedReader(new FileReader(filename));
     }
 
     // Method to close the file
     public void CloseFile() throws IOException {
-        File_.close();
+        bufferedReader.close();
     }
 
     // Method to read a single line from the file
     public String ReadString() throws IOException {
         String str;
         // Reading a line from the file
-        str = File_.readLine();
+        str = bufferedReader.readLine();
         return str;
     }
 
@@ -37,7 +33,7 @@ public class _BufferedFileReader implements TextReader {
     public int ReadInteger() throws IOException {
         String str;
         // Reading a line from the file
-        str = File_.readLine();
+        str = bufferedReader.readLine();
         // Parsing the read string into an integer
         return Integer.parseInt(str);
     }
@@ -66,17 +62,17 @@ public class _BufferedFileReader implements TextReader {
         String variable;
 
         // Marking the current position in the BufferedReader
-        File_.mark(1024);
+        bufferedReader.mark(1024);
         // Reading variables until a line starts with "Task" or the end of the file is reached
         while ((variable = ReadString()) != null && !variable.startsWith("Task")) {
             // Marking the current position for possible reset
-            File_.mark(1024);
+            bufferedReader.mark(1024);
             variables.add(variable);
         }
 
         // If the last read line is not null, reset the BufferedReader to the marked position
         if (variable != null) {
-            File_.reset();
+            bufferedReader.reset();
         }
 
         // Creating a new main.MathExpression object with the read expression and variables
@@ -89,11 +85,33 @@ public class _BufferedFileReader implements TextReader {
         ArrayList<MathExpression> expressions = new ArrayList<>();
         MathExpression expression;
 
-        // Reading expressions until the end of the file is reached
-        while ((expression = ReadMathExpression()) != null) {
-            expressions.add(expression);
+        try {
+            // Reading expressions until the end of the file is reached
+            while ((expression = ReadMathExpression()) != null) {
+                expressions.add(expression);
+            }
         }
-
+        catch (IOException exception) {
+            CloseFile();
+            throw new IOException(exception);
+        }
+        catch (IllegalArgumentException exception) {
+            CloseFile();
+            throw new IllegalArgumentException(exception);
+        }
+        CloseFile();
         return expressions;
+    }
+
+    @Override
+    protected void setFilename(String filename_) {
+        filename = filename_;
+        // Creating a BufferedReader using the filename
+        try {
+            bufferedReader.close();
+            bufferedReader = new BufferedReader(new FileReader(filename));
+        } catch (IOException e) {
+
+        }
     }
 }

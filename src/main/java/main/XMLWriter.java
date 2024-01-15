@@ -18,15 +18,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class XMLWriter implements APIHyperTextWriter {
-    private String filename;
+public class XMLWriter extends APIHyperTextWriter {
     private File file;
     private Document document;
     private Element root;
 
     // Constructor to set the filename
-    public XMLWriter(String filename) {
-        this.filename = filename;
+    public XMLWriter(String filename_) {
+        super(filename_);
     }
 
     // Initialize XML writer
@@ -36,6 +35,7 @@ public class XMLWriter implements APIHyperTextWriter {
         // Create file if it doesn't exist
         if (!file.exists()) {
             _FileWriter fileWriter = new _FileWriter(filename);
+            fileWriter.OpenFile();
             fileWriter.CloseFile();
         }
 

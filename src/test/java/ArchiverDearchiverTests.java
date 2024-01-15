@@ -232,7 +232,7 @@ class ArchiverDearchiverZIPTest {
         fw.CloseFile();
         ArchiverZip ar = new ArchiverZip(arch_outputfilename);
         ar.Archive(ArchiverZip.makeListOfFilesToArchive(inputfilename));
-        ar.CloseArchiverZip();
+        ar.closeArchiverZip();
         DearchiverZip da = new DearchiverZip(arch_outputfilename);
         da.Dearchive();
 
@@ -291,7 +291,7 @@ class ArchiverDearchiverZIPTest {
         }
         ArchiverZip ar = new ArchiverZip(arch_outputfilename);
         ar.Archive(ArchiverZip.makeListOfFilesToArchive(inputdirectoryname));
-        ar.CloseArchiverZip();
+        ar.closeArchiverZip();
         DearchiverZip da = new DearchiverZip(arch_outputfilename);
         ArrayList<String> arc_contents = da.Dearchive();
 
@@ -399,10 +399,10 @@ class ArchiverDearchiverZIPTest {
         ArchiverZip ar = new ArchiverZip(arch_outputfilename);
         try {
             ar.Archive(ArchiverZip.makeListOfFilesToArchive(inputfilename));
-            ar.CloseArchiverZip();
+            ar.closeArchiverZip();
             fail();
         } catch (IOException exception) {
-            ar.CloseArchiverZip();
+            ar.closeArchiverZip();
         }
         file = new File(inputfilename);
         if (file.exists()) {

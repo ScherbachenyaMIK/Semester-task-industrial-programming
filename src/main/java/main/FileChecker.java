@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,9 +28,9 @@ public class FileChecker {
      */
     public static String CheckFormat(InputStream file) throws IOException {
         // Read the first line of the file
-        _BufferedFileReader FR = new _BufferedFileReader(file, "UTF-8");
-        String str = FR.ReadString();
-        FR.CloseFile();
+        BufferedReader FR = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
+        String str = FR.readLine();
+        FR.close();
 
         // Determine the format based on the first line
         switch (ParseString(str)) {

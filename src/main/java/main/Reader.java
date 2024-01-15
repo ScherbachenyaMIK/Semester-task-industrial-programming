@@ -1,66 +1,87 @@
 package main;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
 // Common interface for all readers
-public interface Reader {
+public abstract class Reader extends readerSource {
+    Reader(String filename_) {
+        super(filename_);
+    }
+
     // Method to read a string
-    String ReadString() throws IOException;
+    abstract public String ReadString() throws IOException;
 
     // Method to read an integer
-    int ReadInteger() throws IOException;
+    abstract public int ReadInteger() throws IOException;
 
     // Method to read a mathematical expression
-    MathExpression ReadMathExpression() throws IOException;
+    abstract public MathExpression ReadMathExpression() throws IOException;
 
     // Method to read a list of mathematical expressions
-    ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException;
+    abstract public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException;
 }
 
 // Interface for readers of text data
-interface TextReader extends Reader {
+abstract class TextReader extends Reader {
+    TextReader(String filename_) {
+        super(filename_);
+    }
+
     // Method to free file after reading
-    void CloseFile() throws IOException;
+    abstract void CloseFile() throws IOException;
 }
 
 // Interface for readers of hyper-text data
-interface HyperTextReader extends Reader {
-
+abstract class HyperTextReader extends Reader {
+    HyperTextReader(String filename_) {
+        super(filename_);
+    }
 }
 
 // Interface for readers of hyper-text data through an API
-interface APIHyperTextReader extends HyperTextReader {
+abstract class APIHyperTextReader extends HyperTextReader {
+    APIHyperTextReader(String filename_) {
+        super(filename_);
+    }
 }
 
 // Interface for readers of hyper-text data not using an API
-interface NonAPIHyperTextReader extends HyperTextReader {
+abstract class NonAPIHyperTextReader extends HyperTextReader {
+    NonAPIHyperTextReader(String filename_) {
+        super(filename_);
+    }
+
     // Method to free file after reading
-    void CloseReader() throws IOException;
+    abstract void CloseReader() throws IOException;
 }
 
 /*
 Whole inheritance diagram:
-                                    __________
+                                    _______________
                                     | main.Reader |
-                                    ----------
+                                    ---------------
                                         |
                    |----------------------------------------------------|
                    |                                                    |
                   \/                                                   \/
-             ______________                                   ___________________
+             ___________________                                   ________________________
              | main.TextReader |                                   | main.HyperTextReader |
-             --------------                                   -------------------
-                   |                                                   |
-         |---------------------|                           |------------------------|
-        \/                    \/                          \/                       \/
-   _______________  _______________________     ______________________  _________________________
+             -------------------                                   ------------------------
+                   |                                                        |
+         |---------------------|                                     |-------------------------------|
+        \/                    \/                                    \/                              \/
+   ____________________  ____________________________     ___________________________  ______________________________
    | main._FileReader |  | main._BufferedFileReader |     | main.APIHyperTextReader |  | main.NonAPIHyperTextReader |
-   ---------------  -----------------------     ----------------------  -------------------------
-                                                          |                        |
-                                         |--------------------|                  |---------------------|
-                                        \/                   \/                 \/                    \/
-                                   _____________       ______________   ___________________   ____________________
+   --------------------  ----------------------------     ---------------------------  ------------------------------
+                                                          |                                          |
+                                         |--------------------|                              |---------------------------|
+                                        \/                   \/                             \/                          \/
+                                   __________________       ___________________   ________________________   _________________________
                                    | main.XMLReader |       | main.JsonReader |   | main.XMLNonAPIReader |   | main.JsonNonAPIReader |
-                                   -------------       --------------   -------------------   --------------------
+                                   ------------------       -------------------   ------------------------   -------------------------
 */

@@ -10,13 +10,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 // Implementation of main.NonAPIHyperTextWriter for writing JSON
-public class JsonNonAPIWriter implements NonAPIHyperTextWriter {
-    private String filename;
+public class JsonNonAPIWriter extends NonAPIHyperTextWriter {
     private BufferedWriter writer;
 
     // Constructor with a filename
     public JsonNonAPIWriter(String filename_) throws IOException {
-        filename = filename_;
+        super(filename_);
     }
 
     // Open the writer

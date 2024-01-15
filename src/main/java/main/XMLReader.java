@@ -12,10 +12,8 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class XMLReader implements APIHyperTextReader {
+public class XMLReader extends APIHyperTextReader {
     private int stringCounter = 0;
     private int mathExpressionsCounter = 0;
     Document document;
@@ -23,6 +21,7 @@ public class XMLReader implements APIHyperTextReader {
 
     // Constructor taking the XML file name
     public XMLReader(String filename) throws IllegalArgumentException, FileNotFoundException {
+        super(filename);
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder;
         try {
@@ -33,9 +32,9 @@ public class XMLReader implements APIHyperTextReader {
         try {
             document = documentBuilder.parse(filename);
         } catch (SAXException e) {
-            throw new IllegalArgumentException("File content does not match XML document");
+            return;
         } catch (IOException e) {
-            throw new FileNotFoundException("Unable to load or read file");
+            return;
         }
         root = document.getDocumentElement();
     }
@@ -148,6 +147,26 @@ public class XMLReader implements APIHyperTextReader {
             throw new IllegalArgumentException("Unable to read math expression");
         }
         return expressions;
+    }
+
+    @Override
+    protected void setFilename(String filename_) {
+        filename = filename_;
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder;
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            document = documentBuilder.parse(filename);
+        } catch (SAXException e) {
+
+        } catch (IOException e) {
+
+        }
+        root = document.getDocumentElement();
     }
 }
 

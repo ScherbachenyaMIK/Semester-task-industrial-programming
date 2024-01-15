@@ -10,8 +10,11 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidParameterSpecException;
 import java.io.*;
+import java.util.ArrayList;
 
-public class Encoder {
+public class Encoder extends BaseDecoratorWriter {
+    // Key to decode file
+    private String key = "ssdkF$HUy2A#D%kd";
 
     // Input stream to read the original file
     private InputStream inputStream;
@@ -20,19 +23,28 @@ public class Encoder {
     private OutputStream outputStream;
 
     // Constructor to initialize input and output streams
-    public Encoder(String inputFilePath, String outputFilePath) throws FileNotFoundException {
-        inputStream = new FileInputStream(inputFilePath);
-        outputStream = new FileOutputStream(outputFilePath);
+    public Encoder(writerSource writer_) throws FileNotFoundException {
+        super(writer_);
     }
 
-    // Method to close the encoder, input, and output streams
-    public void CloseEncoder() throws IOException {
+    // Method to close the encoder, input and output streams
+    private void closeEncoder() throws IOException {
         inputStream.close();
         outputStream.close();
     }
 
+    // Method to open the encoder, input and output streams
+    private void openEncoder() throws IOException {
+        inputStream = new FileInputStream(writer.getFilename());
+        outputStream = new FileOutputStream(filename);
+    }
+
     // Method to encrypt the file using AES/CBC/PKCS5PADDING algorithm with the provided key
-    public void encryptFile(String key) throws IOException, InvalidKeyException, InvalidParameterSpecException {
+    public void WriteListOfResultsOfMathExpressions(ArrayList<MathExpression> expressions, int type) throws IOException {
+        writer.setFilename("temp_" + (temps_counter + 1));
+        writer.setTemps_counter(temps_counter + 1);
+        writer.WriteListOfResultsOfMathExpressions(expressions, type);
+        openEncoder();
         try {
             // Creating a SecretKeySpec using the key and the AES algorithm
             SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
@@ -65,9 +77,17 @@ public class Encoder {
             }
 
             // Closing the buffered input stream
-            InputStream.close();
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException e) {
+            closeEncoder();
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException |
+                 InvalidKeyException | InvalidParameterSpecException e) {
+            closeEncoder();
             throw new IOException("Incorrect encoder format!");
+        }
+        // Deletion of temporary file
+        File file = new File(writer.getFilename());
+        if (file.exists())
+        {
+            file.delete();
         }
     }
 }

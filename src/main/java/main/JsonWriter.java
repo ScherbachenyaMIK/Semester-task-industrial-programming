@@ -3,21 +3,19 @@ package main;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.udojava.evalex.Expression;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 // Implementation of main.HyperTextWriter using Jackson for JSON writing
-public class JsonWriter implements HyperTextWriter {
+public class JsonWriter extends APIHyperTextWriter {
     private File File_;
     private ObjectMapper objectMapper;
 
     // Constructor with a filename
     public JsonWriter(String filename) {
+        super(filename);
         objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         File_ = new File(filename);
@@ -25,6 +23,7 @@ public class JsonWriter implements HyperTextWriter {
 
     // Constructor with a File object
     JsonWriter(File EnterFile) {
+        super(EnterFile.getPath());
         objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         File_ = EnterFile;
@@ -66,6 +65,11 @@ public class JsonWriter implements HyperTextWriter {
             }
         }
         objectMapper.writeValue(File_, results);
+    }
+
+    protected void setFilename(String filename_) {
+        filename = filename_;
+        File_ = new File(filename);
     }
 }
 

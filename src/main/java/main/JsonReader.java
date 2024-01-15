@@ -11,17 +11,14 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class JsonReader implements APIHyperTextReader {
+public class JsonReader extends APIHyperTextReader {
     private File File_;
     private ObjectMapper objectMapper;
 
     // Constructor taking filename as input
     public JsonReader(String filename) {
+        super(filename);
         // Initialize ObjectMapper and register main.MathExpressionDeserializer
         objectMapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
@@ -33,6 +30,7 @@ public class JsonReader implements APIHyperTextReader {
 
     // Constructor taking File as input
     JsonReader(File EnterFile) {
+        super(EnterFile.getPath());
         // Initialize ObjectMapper
         objectMapper = new ObjectMapper();
         // Set the file for reading
@@ -82,6 +80,13 @@ public class JsonReader implements APIHyperTextReader {
         } catch (IOException | NullPointerException exception) {
             throw new IllegalArgumentException("Cannot deserialize list of math expressions");
         }
+    }
+
+    @Override
+    protected void setFilename(String filename_) {
+        filename = filename_;
+        // Creating a FileReader using the filename
+        File_ = new File(filename);
     }
 }
 

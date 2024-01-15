@@ -2,22 +2,21 @@ package main;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JsonNonAPIReader implements NonAPIHyperTextReader {
+public class JsonNonAPIReader extends NonAPIHyperTextReader {
 
     // Private member to handle file reading
     private _BufferedFileReader reader;
 
     // Constructor that takes a filename and initializes the reader
     public JsonNonAPIReader(String filename) throws FileNotFoundException {
+        super(filename);
         // Check if the file exists
         File file = new File(filename);
         if (!file.exists()) {
@@ -211,5 +210,16 @@ public class JsonNonAPIReader implements NonAPIHyperTextReader {
             }
         }
         return pairs;
+    }
+
+    @Override
+    protected void setFilename(String filename_) {
+        filename = filename_;
+        // Creating a BufferedReader using the filename
+        try {
+            reader = new _BufferedFileReader(new _FileReader(filename));
+        } catch (FileNotFoundException e) {
+
+        }
     }
 }

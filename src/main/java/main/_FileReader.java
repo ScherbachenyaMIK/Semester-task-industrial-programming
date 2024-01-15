@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.io.*;
 import java.util.ArrayList;
 
-public class _FileReader implements TextReader {
+public class _FileReader extends TextReader {
 
     // FileReader to read characters from a file
     @Getter
@@ -19,12 +19,14 @@ public class _FileReader implements TextReader {
 
     // Constructor that takes a filename as a parameter
     public _FileReader(String filename) throws FileNotFoundException {
+        super(filename);
         // Creating a FileReader for the specified filename
         File_ = new FileReader(filename);
     }
 
     // Constructor that takes a File as a parameter
     _FileReader(File EnterFile) throws FileNotFoundException {
+        super(EnterFile.getPath());
         // Creating a FileReader for the specified File
         File_ = new FileReader(EnterFile);
     }
@@ -128,11 +130,33 @@ public class _FileReader implements TextReader {
         ArrayList<MathExpression> expressions = new ArrayList<>();
         MathExpression expression;
 
-        // Reading expressions until the end of the file is reached
-        while ((expression = ReadMathExpression()) != null) {
-            expressions.add(expression);
+        try {
+            // Reading expressions until the end of the file is reached
+            while ((expression = ReadMathExpression()) != null) {
+                expressions.add(expression);
+            }
         }
-
+        catch (IOException exception) {
+            CloseFile();
+            throw new IOException(exception);
+        }
+        catch (IllegalArgumentException exception) {
+            CloseFile();
+            throw new IllegalArgumentException(exception);
+        }
+        CloseFile();
         return expressions;
+    }
+
+    @Override
+    protected void setFilename(String filename_) {
+        filename = filename_;
+        // Creating a FileReader using the filename
+        try {
+            File_.close();
+            File_ = new FileReader(filename);
+        } catch (IOException e) {
+
+        }
     }
 }

@@ -173,7 +173,7 @@ class FileCheckerTest {
         fw.CloseFile();
         ArchiverZip ar = new ArchiverZip(arch_outputfilename);
         ar.Archive(ArchiverZip.makeListOfFilesToArchive(inputfilename));
-        ar.CloseArchiverZip();
+        ar.closeArchiverZip();
         String fileFormat = FileChecker.CheckFormat(new FileInputStream(arch_outputfilename));
         assertEquals("ZIP", fileFormat);
         file = new File(inputfilename);

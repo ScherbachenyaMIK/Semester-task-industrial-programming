@@ -10,8 +10,11 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
-public class Decoder {
+public class Decoder extends BaseDecoratorReader {
+    // Key to encode file
+    private String key = "ssdkF$HUy2A#D%kd";
 
     // Input stream to read the encoded file
     private InputStream inputStream;
@@ -23,14 +26,12 @@ public class Decoder {
     private String OutputPath;
 
     // Constructor to initialize input and output streams, and the output file path
-    public Decoder(String inputFilePath, String outputFilePath) throws FileNotFoundException {
-        inputStream = new FileInputStream(inputFilePath);
-        outputStream = new FileOutputStream(outputFilePath);
-        OutputPath = outputFilePath;
+    public Decoder(readerSource reader_) throws FileNotFoundException {
+        super(reader_);
     }
 
     // Method to close the decoder, input, and output streams, and delete the output file
-    public void closeDecoder() throws IOException {
+    private void closeDecoder() throws IOException {
         inputStream.close();
         outputStream.close();
         File file = new File(OutputPath);
@@ -39,9 +40,18 @@ public class Decoder {
         }
     }
 
+    // Method to open the decoder, input and output streams
+    private void openDecoder() throws IOException {
+        inputStream = new FileInputStream(filename);
+        OutputPath = "decoded_" + filename;
+        outputStream = new FileOutputStream(OutputPath);
+    }
+
     // Method to decrypt the file using AES/CBC/PKCS5PADDING algorithm with the provided key
-    public void decryptFile(String key) throws IOException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public ArrayList<MathExpression> ReadListOfMathExpressions() throws IOException {
         try {
+            // Opening of decoder
+            openDecoder();
             // Creating a SecretKeySpec using the key and the AES algorithm
             SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
 
@@ -76,8 +86,35 @@ public class Decoder {
 
             // Closing the buffered input stream
             bufferedInputStream.close();
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException |
+                 InvalidAlgorithmParameterException | InvalidKeyException e) {
             throw new IOException("Incorrect decoder format!");
         }
+
+        // Checking the output file format
+        if (FileChecker.CheckFormat(new FileInputStream(OutputPath)).equals("RAR")) {
+            outputStream.close();
+            File file = new File(OutputPath);
+            // if this file represents rar archive add the extension
+            OutputPath += ".rar";
+            file.renameTo(new File(OutputPath));
+        }
+
+        // Set new filename for reader
+        reader.setFilename(OutputPath);
+        ArrayList<MathExpression> result;
+        try {
+            // Starting the reading in another object
+            result = reader.ReadListOfMathExpressions();
+        }
+        catch (IOException | IllegalArgumentException exception) {
+            closeDecoder();
+            throw new IOException(exception);
+        }
+
+        // Closing decoder
+        closeDecoder();
+
+        return result;
     }
 }

@@ -8,13 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class XMLNonAPIWriter implements NonAPIHyperTextWriter {
-    private String filename;
+public class XMLNonAPIWriter extends NonAPIHyperTextWriter {
     private BufferedWriter writer;
 
     // Constructor to set the filename
-    public XMLNonAPIWriter(String filename) throws IOException {
-        this.filename = filename;
+    public XMLNonAPIWriter(String filename_) throws IOException {
+        super(filename_);
     }
 
     // Close the XML writer by writing the closing tag and closing the file

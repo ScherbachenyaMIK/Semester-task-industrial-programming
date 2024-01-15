@@ -9,11 +9,12 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class XMLNonAPIReader implements NonAPIHyperTextReader {
+public class XMLNonAPIReader extends NonAPIHyperTextReader {
     private _BufferedFileReader reader;
 
     // Constructor initializes the reader with the specified filename
     public XMLNonAPIReader(String filename) throws FileNotFoundException {
+        super(filename);
         File file = new File(filename);
         if (!file.exists()) {
             throw new FileNotFoundException("Unable to load file");
@@ -252,5 +253,16 @@ public class XMLNonAPIReader implements NonAPIHyperTextReader {
             throw new IllegalArgumentException("Unable to read math expression");
         }
         return expressions;
+    }
+
+    @Override
+    protected void setFilename(String filename_) {
+        filename = filename_;
+        // Creating a BufferedReader using the filename
+        try {
+            reader = new _BufferedFileReader(new _FileReader(filename));
+        } catch (FileNotFoundException e) {
+
+        }
     }
 }
